@@ -11,13 +11,38 @@ HealthHive is a health information application designed to empower individuals t
 
 ## Get Start
 
-At Directory **HealthHive**, build up docker containers
+At Directory **HealthHive**, build up docker containers use following command
 
 ```
-Docker-compose build 
-
-Docker-compose up -d
-
+docker-compose build 
 ```
 
-Then, access React app at localhost:3000
+Then run build up containers communication in background using following command
+
+```
+docker-compose up
+```
+
+**Notice** This step will take 1-2 min to come up because the Cassandra cluster has to initialize.
+
+Feel free to check flask server's status using
+
+```
+docker logs healthhive-flask-backend-1
+```
+**Or**
+
+```
+docker logs <-container id of flask backend container->
+```
+
+## Access 
+Access React app at **localhost:3000**
+
+
+## Testing (temporary)
+
+Check Flask app's stauts at **localhost:4001** 
+You need to see Hello Flask to have flask app running
+
+Feel free to check http://localhost:4001/showtable to check cassandra table's result
