@@ -20,7 +20,7 @@ docker-compose build
 Then run build up containers communication in background using following command
 
 ```
-docker-compose up
+docker-compose up -d
 ```
 
 **Notice** This step will take 1-2 min to come up because the Cassandra cluster has to initialize.
