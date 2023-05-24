@@ -1,4 +1,5 @@
 version: '3'
+
 services:
   react-frontend:
     build:
@@ -8,6 +9,7 @@ services:
       - 3000:3000
     networks:
       - mynetwork
+      - cassandra-network
 
   flask-backend:
     build:
@@ -17,6 +19,34 @@ services:
       - 4001:4001
     networks:
       - mynetwork
+      - cassandra-network
+
+  cassandra-seed:
+    image: cassandra:latest
+    ports:
+      - 9042:9042
+    networks:
+      - cassandra-network
+    environment:
+      - CASSANDRA_CLUSTER_NAME=my-cluster
+      - CASSANDRA_SEEDS=cassandra-seed
+
+  cassandra-worker1:
+    image: cassandra:latest
+    networks:
+      - cassandra-network
+    environment:
+      - CASSANDRA_CLUSTER_NAME=my-cluster
+      - CASSANDRA_SEEDS=cassandra-seed
+
+  cassandra-worker2:
+    image: cassandra:latest
+    networks:
+      - cassandra-network
+    environment:
+      - CASSANDRA_CLUSTER_NAME=my-cluster
+      - CASSANDRA_SEEDS=cassandra-seed
 
 networks:
   mynetwork:
+  cassandra-network:
