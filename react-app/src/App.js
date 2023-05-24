@@ -1,5 +1,5 @@
 function App() {
-  return (<div>Hello World</div>)
+  return (<div>Testing React server's working docker-compose file</div>)
 }
 
 export default App;

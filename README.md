@@ -8,3 +8,16 @@ HealthHive is a health information application designed to empower individuals t
 - **Health Visualization**: Visualize your health data through interactive charts and graphs, allowing you to gain insights and identify trends.
 - **Wellness Forecast**: Get personalized wellness forecasts based on your health data, helping you plan and make informed decisions.
 - **Health Chat Assistants**: Interact with chat assistants powered by artificial intelligence to receive personalized health recommendations and guidance.
+
+## Get Start
+
+At Directory **HealthHive**, build up docker containers
+
+```
+Docker-compose build 
+
+Docker-compose up -d
+
+```
+
+Then, access React app at localhost:3000
