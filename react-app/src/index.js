@@ -4,13 +4,17 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Calculator from './test-connection';
 import Dateform from './test-db';
+import Navbar from './components/navbar_components/Navbar';
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
-    <Calculator />
-    <Dateform />
+    <Router>
+      <App />
+      <Calculator />
+      <Dateform />
+    </Router>
   </React.StrictMode>
 );
 
