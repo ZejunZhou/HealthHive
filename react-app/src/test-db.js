@@ -21,6 +21,7 @@ function Dateform() {
     axios.post('http://localhost:4001/insert-data', requestData)
       .then(response => {
         setMessage('Data inserted successfully!');
+        console.log(requestData)
       })
       .catch(error => {
         setMessage('Error inserting data.');

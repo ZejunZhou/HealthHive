@@ -1,0 +1,142 @@
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.calendar {
+  width: 100%;
+  max-width: 400px;
+  background-color: #f2f2f2;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.today-btn {
+  background-color: #4287f5;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.current-month {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.calendar-navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.prev-btn,
+.next-btn {
+  background-color: #fff;
+  border: none;
+  font-size: 24px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.calendar-dates {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+}
+
+.calendar-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.today {
+  background-color: #4287f5;
+  color: #fff;
+}
+
+.selected {
+  background-color: #e8e8e8;
+}
+
+.date {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.health-status {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.report-health-btn,
+.modify-record-btn {
+  background-color: #4287f5;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.health-status-form {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.health-status-form h2 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.health-status-form form {
+  display: flex;
+  flex-direction: column;
+}
+
+.health-status-form label {
+  margin-bottom: 10px;
+}
+
+.health-status-form input {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+.health-status-form button {
+  background-color: #4287f5;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
