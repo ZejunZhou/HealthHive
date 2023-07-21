@@ -1,0 +1,148 @@
+/* HTML TAG SELECTOR */
+
+.loginFormOuterbox form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.loginFormOuterbox input {
+  font-family: inherit;
+  width: 70%;
+  border: 0;
+  border-bottom: 2px solid white;
+  outline: 0;
+  font-size: 1.3rem;
+  color: white;
+  padding: 7px 0;
+  background: transparent;
+  transition: border-color 0.2s;
+}
+
+.loginFormOuterbox input::placeholder {
+  color: white;
+}
+
+
+/* CLASS SELECTOR */
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  padding: 10px;
+  padding-left: 60px;
+  padding-right: 60px;
+  width: fit-content;
+  border: 1px solid gray;
+  border-radius: 20px;
+  transition: 0.5s;
+}
+
+.content:hover {
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.googleImg {
+  padding-right: 0.25rem;
+}
+
+.loginFormOuterbox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+}
+
+.box {
+  position: relative;
+  background-color: #A0D8B3;
+  width: 80%;
+  height: 50%;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.containerButton {
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+.formContainer {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  color: white;
+}
+
+.signInContainer {
+  left: 0;
+  width: 50%;
+  z-index: 2;
+}
+
+.signUpContainer {
+  left: 0;
+  width: 50%;
+  opacity: 0;
+  z-index: 1;
+}
+
+.overlay {
+  background: white;
+  width: 200%;
+  height: 100%;
+  left: -100%;
+  position: relative;
+  transition: all 0.6s ease-in-out;
+  color: #333;
+}
+
+.overlayContainer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100%;
+  transition: all 0.6s ease-in-out;
+  z-index: 99;
+  overflow: hidden;
+}
+
+.overlayPanel {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  height: 100%;
+}
+
+.overlayRight {
+  right: 0;
+}
+
+/* Animation Class Selector */
+
+.rightPanelActive .overlayContainer {
+  transform: translateX(-100%);
+}
+
+.rightPanelActive .signInContainer {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.rightPanelActive .signUpContainer {
+  z-index: 99;
+  opacity: 1;
+  transform: translateX(100%);
+}
+
+.rightPanelActive .overlay {
+  transform: translateX(50%);
+}

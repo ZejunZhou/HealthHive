@@ -16,8 +16,8 @@ root.render(
   <React.StrictMode>
     <Router>
       <App />
-      <Calculator />
-      <Dateform />
+      {/* <Calculator />
+      <Dateform /> */}
     </Router>
   </React.StrictMode>
   </GoogleOAuthProvider>

@@ -3,11 +3,13 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {useEffect } from 'react';
+import styles from "./LoginForm.module.css"
 
 
-const Login = ({isLogin, setLogin, userInfo, setUserInfo}) => {
+const GoogleLogin = ({isLogin, setLogin, userInfo, setUserInfo}) => {
 
   const navigate = useNavigate();
+
 
   /**
    * when authentication is success, use the token to get userInfo 
@@ -52,7 +54,7 @@ const Login = ({isLogin, setLogin, userInfo, setUserInfo}) => {
    * hooks that monitor userinfo, is there is userinfo obj, navigate to healthlog
    */
   useEffect(() => {
-    //console.log("login verfify is ", userInfo, isLogin)
+    console.log("login verfify is ", userInfo, isLogin)
     if (userInfo && !isLogin) {
       setLogin(true);
       navigate("/healthlog");
@@ -62,8 +64,11 @@ const Login = ({isLogin, setLogin, userInfo, setUserInfo}) => {
 
 
   return (
-    <button onClick={login}>Sign in with Google</button>
+   <button className={styles.content} onClick={login}> 
+      <img className={styles.googleImg} src="https://img.icons8.com/color/16/000000/google-logo.png" alt="google"/>
+      <span>Continue with Google</span>
+   </button>
   );
 };
 
-export default Login;
+export default GoogleLogin;
