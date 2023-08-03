@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-const Logout = ({setLogin, setUserInfo}) => {
+const Logout = ({setLogin, setUserInfo, setUsername, setPassword, setEmail}) => {
 
     const navigate = useNavigate();
 

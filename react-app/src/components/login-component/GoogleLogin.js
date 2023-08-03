@@ -10,7 +10,6 @@ const GoogleLogin = ({isLogin, setLogin, userInfo, setUserInfo}) => {
 
   const navigate = useNavigate();
 
-
   /**
    * when authentication is success, use the token to get userInfo 
    * @param {*} codeResponse 
@@ -64,7 +63,7 @@ const GoogleLogin = ({isLogin, setLogin, userInfo, setUserInfo}) => {
 
 
   return (
-   <button className={styles.content} onClick={login}> 
+   <button type="button" className={styles.content} onClick={login}> 
       <img className={styles.googleImg} src="https://img.icons8.com/color/16/000000/google-logo.png" alt="google"/>
       <span>Continue with Google</span>
    </button>

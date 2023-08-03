@@ -14,9 +14,12 @@ import { useState } from "react";
 function App() {
   const [isLogin, setLogin] = useState(false); // define hook to trace login status
   const [userInfo, setUserInfo] = useState(null); // define hook to save userinfo through session
-
+ 
   console.log(isLogin);
-
+  if (userInfo != null){
+     console.log("username is ", userInfo.name, "password is", userInfo.password, "email is", userInfo.email)
+  }
+ 
   const location = useLocation();
   const { pathname } = location;
 
@@ -24,7 +27,7 @@ function App() {
     <div>
       {!pathname.includes('/login') && (
       <Navbar>
-        {isLogin ? <Logout setLogin={setLogin} setUserInfo={setUserInfo} /> : <Link to='/login'>Log in</Link>}
+        {isLogin ? <Logout setLogin={setLogin} setUserInfo={setUserInfo}/> : <Link to='/login'>Log in</Link>}
       </Navbar>
     )}
       <Routes>

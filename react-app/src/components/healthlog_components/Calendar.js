@@ -24,7 +24,10 @@ function Calendar() {
   });
 
   const handleDateClick = (date) => {
-    setSelectedDate(date);
+    // if the form is open, not allow to select anymore date from calandar
+    if (!showHealthStatusForm){
+      setSelectedDate(date);
+    }
   };
 
   const handleHealthStatusInputChange = (e) => {
@@ -327,7 +330,8 @@ function Calendar() {
                 name="diet"
                 value={healthStatusInput.diet}
                 onChange={handleHealthStatusInputChange}
-              >
+              > 
+                <option>Choose Your Diet Type</option>
                 <option value="only meat">Only Meat</option>
                 <option value="only vegetables">Only Vegetables</option>
                 <option value="meat and vegetables">Meat and Vegetables</option>
