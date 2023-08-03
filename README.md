@@ -2,11 +2,10 @@
 
 HealthHive is a health information application designed to empower individuals to create personalized and easily accessible health insights. It provides customers with access to a comprehensive suite of health management resources to assist them in understanding and promoting their wellness. The application includes features such as health logs, health visualization, wellness forecasts, and health chat assistants.
 
-## Update
+## Documentation Update
 
-I am excited to have Tong from the University of Wisconsin-Madison joining this project. The working place has now been moved to https://github.com/WiscDeveloper/HealthHive.
-
-This repository will continue to be updated, but it is less likely to have the latest version. Please check our latest development at https://github.com/WiscDeveloper/HealthHive.
+Rev. 1.0 <2023-05-20>
+Rev. 1.1 <2023-08-01>
 
 ## Features
 
@@ -14,6 +13,14 @@ This repository will continue to be updated, but it is less likely to have the l
 - **Health Visualization**: Visualize your health data through interactive charts and graphs, allowing you to gain insights and identify trends.
 - **Wellness Forecast**: Get personalized wellness forecasts based on your health data, helping you plan and make informed decisions.
 - **Health Chat Assistants**: Interact with chat assistants powered by artificial intelligence to receive personalized health recommendations and guidance.
+
+## Documentation
+
+Please check the project documentation at [here](./HealthHive_Requirement_Documentation.v1.1.docx)
+
+## Project Structure
+
+![Structure](./readme-reference/HealthHive-structure.png)
 
 ## Get Start
 
