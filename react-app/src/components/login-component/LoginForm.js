@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import styles from './LoginForm.module.css';
 import GoogleLogin from './GoogleLogin';
+import axios from 'axios';
 
 const LoginPage = ({ isLogin, setLogin, userInfo, setUserInfo}) => {
 
@@ -48,7 +49,26 @@ const LoginPage = ({ isLogin, setLogin, userInfo, setUserInfo}) => {
     if (email.trim() === '' || password.trim() === ''){
         alert('Please enter both username and password.');
     }else{
-        setUserInfo({name:"sign in test name", password:password, email:email})
+        axios.get("http://localhost:4001/get_user", {params:{email:email}})
+        .then((response) => {
+          const server_password = response.data.password
+          const server_email = response.data.email
+          // case success, successfully log in
+          if (password === server_password && email === server_email) {
+            setUserInfo({name: response.data.username, password:response.data.password, email:response.data.email})
+          } else {
+            alert("your password does not match your account")
+            return; 
+          }
+        })
+        .catch((error) => {// case not reqister
+            if (error.response && error.response.data.message === "Account not registered") {
+                alert("your account has not been registered")
+                return;
+            } else { // case fetch data error
+                console.log(error, "something wrong with fetch db")
+            }
+        })
     }
   }
 
@@ -100,8 +120,29 @@ const LoginPage = ({ isLogin, setLogin, userInfo, setUserInfo}) => {
     if (username.trim() === '' || password.trim() === '' || email.trim() === ''){
         alert('Please enter your username, password and email to sign up')
     }else{
-        setUserInfo({name: username, password: password, email:email})
-    }
+         axios.get("http://localhost:4001/get_user", {params:{email:email}})
+         .then((response) => {
+          // case if we have email in our database
+          if (response.data){
+            alert("your account has been registered, please do not register more than once")
+            return;
+          }
+         })
+         .catch((error) => {
+             // case not reqister, get start to register
+            if (error.response && error.response.data.message === "Account not registered") {
+                 axios.post("http://localhost:4001/user_insertion", {email: email, username: username, password: password})
+                .then((response) => {
+                  console.log("user data insert successfully")
+                  // make sure user info in database and then set to login
+                  setUserInfo({name: username, password: password, email:email})
+                  })
+                .catch((error) => console.log(error, "something wrong with post to db"))
+            } else { // case fetch data error
+                console.log(error, "something wrong with fetch from db")
+            }
+        })
+    } 
   }
 
   return (

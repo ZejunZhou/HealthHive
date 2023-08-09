@@ -10,6 +10,7 @@ services:
     networks:
       - mynetwork
       - cassandra-network
+      - my_shared_network
 
   flask-backend:
     build:
@@ -38,6 +39,8 @@ services:
     environment:
       - CASSANDRA_CLUSTER_NAME=my-cluster
       - CASSANDRA_SEEDS=cassandra-seed
+    depends_on:
+      - cassandra-seed
 
   cassandra-worker2:
     image: cassandra:latest
@@ -46,7 +49,12 @@ services:
     environment:
       - CASSANDRA_CLUSTER_NAME=my-cluster
       - CASSANDRA_SEEDS=cassandra-seed
+    depends_on:
+      - cassandra-seed
 
 networks:
   mynetwork:
   cassandra-network:
+  my_shared_network:
+    external: true
+

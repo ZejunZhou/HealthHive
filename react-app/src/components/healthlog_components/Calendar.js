@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Calendar.css";
 import axios from 'axios';
 
-function Calendar() {
+function Calendar({userInfo}) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
   const [healthStatus, setHealthStatus] = useState({});
@@ -23,6 +23,19 @@ function Calendar() {
     weather_condition: "",
   });
 
+  const [healthStatus_db, setHealthStatus_db] = useState({}) // hooks to stores data from database
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:4001/get_logs", {params:{email:userInfo.email}})
+      .then((response) => {
+        setHealthStatus_db(response.data)
+      }) 
+      .catch((error) => {
+        console.log(error)
+      })
+  }, [userInfo.email])
+
   const handleDateClick = (date) => {
     // if the form is open, not allow to select anymore date from calandar
     if (!showHealthStatusForm){
@@ -38,12 +51,36 @@ function Calendar() {
   };
 
   const handleReportHealthStatus = () => {
+    console.log(selectedDate)
     setShowHealthStatusForm(true);
   };
 
   const handleModifyRecord = () => {
+    console.log(selectedDate)
     setShowHealthStatusForm(true);
   };
+  /**function delete data from database and frontend input*/
+  const handleDeleteRecord = async() =>{
+
+    console.log("Selected date is", selectedDate);
+
+    const updatedHealthStatus = {...healthStatus} // shallow copy the healthStatus for deletion
+    delete updatedHealthStatus[selectedDate.toDateString()] // delete the object based on key
+    
+    // delete from db
+    await axios
+    .delete("http://localhost:4001/delete_logs", {params: {email:userInfo.email, date:selectedDate.toDateString()}})
+    .then((response) => {console.log("successfully delete from db")})
+    .catch((error) => {console.log(error)})
+
+    // get update HealthStatus_db
+    await axios
+    .get("http://localhost:4001/get_logs", {params:{email:userInfo.email}})
+    .then((response) => {setHealthStatus_db(response.data)})
+    .catch((error) =>{console.log(error)})
+
+    setHealthStatus(updatedHealthStatus) // update the status
+  }
   
   /**
    * This function is invoked when user submit their health status
@@ -63,8 +100,8 @@ function Calendar() {
       // console.log(updatedHealthStatus)
 
       const requestData = {
-        email: "zhou@qq.com",
-        username: "zejun",
+        email: userInfo.email,
+        username: (userInfo.name).toLowerCase(),
         date: selectedDate.toDateString(),
         heart_rate: healthStatusInput.heart_rate,
         weight: healthStatusInput.weight,
@@ -89,7 +126,7 @@ function Calendar() {
       });
 
       setHealthStatus(updatedHealthStatus);
-      setSelectedDate(null);
+      //setSelectedDate(null);
       setHealthStatusInput({
         email: "",
         username: "",
@@ -206,7 +243,7 @@ function Calendar() {
         <div className="calendar-dates">
           {calendarDates.map((date) => {
             const dateStr = date.toDateString();
-            const healthStatusReport = healthStatus[dateStr];
+            const healthStatusReport =  healthStatus[dateStr] || healthStatus_db[dateStr];
 
             const isToday = date.toDateString() === new Date().toDateString();
             const isSelected = selectedDate && date.toDateString() === selectedDate.toDateString();
@@ -247,6 +284,14 @@ function Calendar() {
                     onClick={() => handleModifyRecord()}
                   >
                     Modify Record
+                  </button>
+                )}
+                {healthStatusReport && selectedDate && date.toDateString() === selectedDate.toDateString() && (
+                  <button
+                    className="modify-record-btn"
+                    onClick={() => handleDeleteRecord()}
+                  >
+                    Delete Record
                   </button>
                 )}
               </div>
