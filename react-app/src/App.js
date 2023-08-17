@@ -33,8 +33,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/healthlog" element={isLogin ? <HealthLog userInfo={userInfo}/> : <AccessDenied />} />
-        <Route path="/visualization" element={isLogin ? <Visualization /> : <AccessDenied />} />
-        <Route path="/forcast" element={isLogin ? <Forcast /> : <AccessDenied />} />
+        <Route path="/visualization" element={isLogin ? <Visualization userInfo={userInfo}/> : <AccessDenied />} />
+        <Route path="/forcast" element={isLogin ? <Forcast userInfo={userInfo}/> : <AccessDenied />} />
         <Route path="/chat" element={isLogin ? <Chat /> : <AccessDenied />} />
         <Route path="/login" element={<LoginForm isLogin={isLogin} setLogin={setLogin} userInfo={userInfo} setUserInfo={setUserInfo}/>} />
       </Routes>

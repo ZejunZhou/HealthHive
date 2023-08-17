@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pyspark.sql import SparkSession
 import time
-import pyspark
+
 
 app = Flask(__name__)
 CORS(app)
@@ -10,13 +10,13 @@ CORS(app)
 def get_spark_session():
     return SparkSession.builder \
         .appName("FlaskSparkApp") \
-        .master("spark://spark-master:7077") \
+        .master("local[1]") \
         .getOrCreate()
 
 spark = get_spark_session() ## initialize spark session
-# execute a simple job to warm up SparkSession
-rdd = spark.sparkContext.parallelize([1, 2, 3, 4, 5])
-rdd.count()
+# # execute a simple job to warm up SparkSession
+# rdd = spark.sparkContext.parallelize([1, 2, 3, 4, 5])
+# rdd.count()
 
 @app.route('/')
 def test_flask():

@@ -34,6 +34,8 @@ services:
 
   cassandra-worker1:
     image: cassandra:latest
+    ports:
+      - 9043:9043
     networks:
       - cassandra-network
     environment:
@@ -44,6 +46,8 @@ services:
 
   cassandra-worker2:
     image: cassandra:latest
+    ports:
+      - 9044:9044
     networks:
       - cassandra-network
     environment:

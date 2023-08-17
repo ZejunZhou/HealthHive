@@ -1,7 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from cassandra.cluster import Cluster
-from datetime import datetime
+from datetime import datetime, timedelta
+import random
 
 app = Flask(__name__)
 CORS(app)
@@ -11,6 +12,60 @@ print("starting flask app")
 cluster = Cluster(contact_points=['cassandra-seed'], port=9042)
 session = cluster.connect()
 
+
+session.execute("""
+    CREATE KEYSPACE IF NOT EXISTS health_hive
+    WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 2};
+""")
+session.execute("""USE health_hive""")
+session.execute("""
+        CREATE TABLE IF NOT EXISTS health_hive.logs (
+            email text,
+            username text static,
+            date text,
+            heart_rate text,
+            weight text,
+            blood_pressure text,
+            body_temperature text,
+            hours_of_sleep text,
+            stress_level text,
+            water_intake text,
+            diet text,
+            exercise_minutes text,
+            mood text,
+            weather_condition text,
+            PRIMARY KEY (email, date)
+        );
+    """)
+
+start_date = datetime(2023, 8, 1)
+dates = [(start_date + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(100)]
+
+# 为每个日期生成随机健康数据
+for date in dates:
+    email = "zzhou443@wisc.edu"
+    username = "user123456"  # 随机用户名
+    heart_rate = str(random.randint(60, 100))
+    weight = str(round(random.uniform(40, 110), 2))  # 体重范围从50kg到100kg
+    blood_pressure = f"{random.randint(90, 120)}/{random.randint(60, 80)}"
+    body_temperature = str(round(random.uniform(36.5, 40), 1))
+    hours_of_sleep = str(round(random.uniform(4, 10), 1))
+    stress_level = str(random.randint(1, 10))
+    water_intake = str(random.randint(1, 8))  # 1到8杯水
+    diet = "Healthy" if random.random() > 0.5 else "Unhealthy"
+    exercise_minutes = str(random.randint(0, 120))
+    mood = random.choice(["Happy", "Sad", "Neutral", "Excited", "Tired"])
+    weather_condition = random.choice(["Sunny", "Rainy", "Cloudy", "Windy", "Snowy"])
+
+    
+    # 这里是你的插入数据库的代码
+    session.execute(
+        """
+        INSERT INTO health_hive.logs (email, username, date, heart_rate, weight, blood_pressure, body_temperature, hours_of_sleep, stress_level, water_intake, diet, exercise_minutes, mood, weather_condition)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """,
+        (email, username, date, heart_rate, weight, blood_pressure, body_temperature, hours_of_sleep, stress_level, water_intake, diet, exercise_minutes, mood, weather_condition)
+    )
 
 @app.route('/')
 def hello():
@@ -189,6 +244,74 @@ def get_logs_by_email(email):
         date_str = row.date 
         data[date_str] = {'email': row.email, 'username': row.username, 'heart_rate': row.heart_rate, 'weight': row.weight, 'blood_pressure': row.blood_pressure, 'body_temperature': row.body_temperature, 'hours_of_sleep': row.hours_of_sleep, 'stress_level': row.stress_level, 'water_intake': row.water_intake, 'diet': row.diet, 'exercise_minutes': row.exercise_minutes, 'mood': row.mood, 'weather_condition': row.weather_condition}
     return data
+
+## Function get health info by specific date
+@app.route("/get_logs_by_date", methods=['GET'])
+def get_logs_by_date():
+    keyspace = "health_hive"
+    table = "logs"
+    email = request.args.get("email")
+    date = request.args.get("date")
+    query = f"SELECT * FROM {keyspace}.{table} WHERE email=%s AND date=%s"
+    rows = session.execute(query, [email, date])
+    data = {}
+    for row in rows:
+        date_str = row.date 
+        data[date_str] = {'heart_rate': row.heart_rate, 'weight': row.weight, 'blood_pressure': row.blood_pressure, 'body_temperature': row.body_temperature, 'hours_of_sleep': row.hours_of_sleep, 'stress_level': row.stress_level, 'water_intake': row.water_intake, 'diet': row.diet, 'exercise_minutes': row.exercise_minutes, 'mood': row.mood, 'weather_condition': row.weather_condition}
+    if not data:
+        return jsonify({"message": "No records found for the given email and date."}), 401
+    return jsonify(data)
+
+
+
+## Method fetch data from database
+@app.route("/get_single_logs", methods=['GET'])
+def get_single_logs():
+    print("calling get single logs")
+    email = request.args.get('email')
+    metric = request.args.get("metric")
+    logs = get_single_logs_by_email(email, metric)
+    return jsonify(logs)
+
+## Helper method help to get data from database by email
+def get_single_logs_by_email(email, metric):
+    if metric not in ["heart_rate", "weight", "blood_pressure", "body_temperature", "hours_of_sleep", "stress_level", "water_intake", "diet", "exercise_minutes", "mood", "weather_condition"]:
+        return jsonify({"error": "Invalid metric"}), 400
+    keyspace = "health_hive"
+    table = "logs"
+    query = f"SELECT email, username, date, {metric} FROM {keyspace}.{table} WHERE email=%s"
+    rows = session.execute(query, [email])
+    data = {}
+    for row in rows:
+        date_str = row.date 
+        data[date_str] = {'email': row.email, 'username': row.username, metric:getattr(row, metric)}
+    return data
+
+@app.route("/get_single_logs_by_date", methods=["GET"])
+def get_single_log_by_date():
+    email = request.args.get('email')
+    metric = request.args.get("metric")
+    startDate = request.args.get("startDate")
+    endDate = request.args.get("endDate")
+    logs = get_single_logs_by_email_date(email, metric, startDate, endDate)
+    return jsonify(logs)
+
+def get_single_logs_by_email_date(email, metric, startDate, endDate):
+    if metric not in ["heart_rate", "weight", "blood_pressure", "body_temperature", "hours_of_sleep", "stress_level", "water_intake", "diet", "exercise_minutes", "mood", "weather_condition"]:
+        return jsonify({"error": "Invalid metric"}), 400
+    keyspace = "health_hive"
+    table = "logs"
+    query = f"SELECT email, username, date, {metric} FROM {keyspace}.{table} WHERE email=%s AND date >= %s AND date <= %s"
+    try:
+        rows = session.execute(query, [email, startDate, endDate])
+        data = {}
+        for row in rows:
+            date_str = row.date 
+            data[date_str] = {'email': row.email, 'username': row.username, metric:getattr(row, metric)}
+        return data
+    except Exception as e:
+        print("Error executing query:", e)  # Log the error for debugging
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route('/insert-data', methods=['POST'])

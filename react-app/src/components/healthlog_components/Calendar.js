@@ -15,20 +15,24 @@ function Calendar({userInfo}) {
     blood_pressure: "",
     body_temperature: "",
     hours_of_sleep: "",
-    stress_level: "",
+    stress_level: "1",
     water_intake: "",
-    diet: "",
+    diet: "Healthy",
     exercise_minutes: "",
-    mood: "",
-    weather_condition: "",
+    mood: "Happy",
+    weather_condition: "Sunny",
   });
 
   const [healthStatus_db, setHealthStatus_db] = useState({}) // hooks to stores data from database
+  const [systolic, setSystolic] = useState('');
+  const [diastolic, setDiastolic] = useState('');
+
 
   useEffect(() => {
     axios
       .get("http://localhost:4001/get_logs", {params:{email:userInfo.email}})
       .then((response) => {
+        setHealthStatus(response.data)
         setHealthStatus_db(response.data)
       }) 
       .catch((error) => {
@@ -37,11 +41,33 @@ function Calendar({userInfo}) {
   }, [userInfo.email])
 
   const handleDateClick = (date) => {
-    // if the form is open, not allow to select anymore date from calandar
+    // if form is not open, allow to select date
     if (!showHealthStatusForm){
       setSelectedDate(date);
+      const dateStr = formatDate(date.toDateString());
+      if (healthStatus[dateStr]) {
+        setHealthStatusInput(healthStatus[dateStr]);
+      } else {
+        // Reset to default values if no record for that day
+        setHealthStatusInput({
+          email: "",
+          username: "",
+          heart_rate: "",
+          weight: "",
+          blood_pressure: "",
+          body_temperature: "",
+          hours_of_sleep: "",
+          stress_level: "1",
+          water_intake: "",
+          diet: "Healthy",
+          exercise_minutes: "",
+          mood: "Happy",
+          weather_condition: "Sunny",
+        });
+      }
     }
-  };
+};
+
 
   const handleHealthStatusInputChange = (e) => {
     setHealthStatusInput({
@@ -59,17 +85,29 @@ function Calendar({userInfo}) {
     console.log(selectedDate)
     setShowHealthStatusForm(true);
   };
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // +1 because months are 0-indexed
+    const day = date.getDate().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+}
+
   /**function delete data from database and frontend input*/
   const handleDeleteRecord = async() =>{
 
     console.log("Selected date is", selectedDate);
+    console.log("health status is", healthStatus)
+    console.log("healthstatus db is ", healthStatus_db)
 
     const updatedHealthStatus = {...healthStatus} // shallow copy the healthStatus for deletion
-    delete updatedHealthStatus[selectedDate.toDateString()] // delete the object based on key
+    delete updatedHealthStatus[formatDate(selectedDate.toDateString())] // delete the object based on key
     
     // delete from db
     await axios
-    .delete("http://localhost:4001/delete_logs", {params: {email:userInfo.email, date:selectedDate.toDateString()}})
+    .delete("http://localhost:4001/delete_logs", {params: {email:userInfo.email, date:formatDate(selectedDate.toDateString())}})
     .then((response) => {console.log("successfully delete from db")})
     .catch((error) => {console.log(error)})
 
@@ -91,7 +129,7 @@ function Calendar({userInfo}) {
     if (selectedDate) {
       const updatedHealthStatus = {
         ...healthStatus,
-        [selectedDate.toDateString()]: {
+        [formatDate(selectedDate.toDateString())]: {
           ...healthStatusInput,
         },
       };
@@ -102,7 +140,7 @@ function Calendar({userInfo}) {
       const requestData = {
         email: userInfo.email,
         username: (userInfo.name).toLowerCase(),
-        date: selectedDate.toDateString(),
+        date: formatDate(selectedDate.toDateString()),
         heart_rate: healthStatusInput.heart_rate,
         weight: healthStatusInput.weight,
         blood_pressure: healthStatusInput.blood_pressure,
@@ -137,10 +175,10 @@ function Calendar({userInfo}) {
         hours_of_sleep: "",
         stress_level: "",
         water_intake: "",
-        diet: "",
+        diet: "Healthy",
         exercise_minutes: "",
-        mood: "",
-        weather_condition: "",
+        mood: "Happy",
+        weather_condition: "Sunny",
       });
       setShowHealthStatusForm(false);
     }
@@ -219,6 +257,27 @@ function Calendar({userInfo}) {
   };
 
   const calendarDates = generateCalendarDates();
+  
+  // function convert blood pressure into a string Systolic/Diatolic
+  const handleSystolicChange = (e) => {
+        setSystolic(e.target.value);
+        if (diastolic) {
+            setHealthStatusInput({
+                ...healthStatusInput,
+                blood_pressure: `${e.target.value}/${diastolic}`
+            });
+        }
+    };
+
+    const handleDiastolicChange = (e) => {
+        setDiastolic(e.target.value);
+        if (systolic) {
+            setHealthStatusInput({
+                ...healthStatusInput,
+                blood_pressure: `${systolic}/${e.target.value}`
+            });
+        }
+    };
 
   return (
     <div className="calendar-container">
@@ -242,7 +301,7 @@ function Calendar({userInfo}) {
         </div>
         <div className="calendar-dates">
           {calendarDates.map((date) => {
-            const dateStr = date.toDateString();
+            const dateStr = formatDate(date.toDateString());
             const healthStatusReport =  healthStatus[dateStr] || healthStatus_db[dateStr];
 
             const isToday = date.toDateString() === new Date().toDateString();
@@ -301,7 +360,7 @@ function Calendar({userInfo}) {
       </div>
       {showHealthStatusForm && (
         <div className="health-status-form">
-          {healthStatus[selectedDate.toDateString()] ? (
+          {healthStatus[formatDate(selectedDate.toDateString())] ? (
           <h2>Modify your record</h2> )
           : (<h2>Record your health</h2> )
           }
@@ -313,7 +372,9 @@ function Calendar({userInfo}) {
                 name="heart_rate"
                 value={healthStatusInput.heart_rate}
                 onChange={handleHealthStatusInputChange}
+                placeholder="e.g. 72"
               />
+              <span> bpm</span> 
             </label>
             <label>
               Weight:
@@ -322,16 +383,27 @@ function Calendar({userInfo}) {
                 name="weight"
                 value={healthStatusInput.weight}
                 onChange={handleHealthStatusInputChange}
+                placeholder="e.g. 60"
               />
+              <span> kg</span>
             </label>
             <label>
               Blood Pressure:
               <input
-                type="text"
-                name="blood_pressure"
-                value={healthStatusInput.blood_pressure}
-                onChange={handleHealthStatusInputChange}
+                type="number"
+                placeholder="Systolic"
+                value={systolic}
+                onChange={handleSystolicChange}
               />
+              <span> mmHg</span>
+              <span> / </span>
+              <input
+                  type="number"
+                  placeholder="Diastolic"
+                  value={diastolic}
+                  onChange={handleDiastolicChange}
+              />
+              <span> mmHg</span>
             </label>
             <label>
               Body Temperature:
@@ -340,7 +412,9 @@ function Calendar({userInfo}) {
                 name="body_temperature"
                 value={healthStatusInput.body_temperature}
                 onChange={handleHealthStatusInputChange}
+                placeholder="e.g. 37"
               />
+              <span> °C</span>
             </label>
             <label>
               Hours of Sleep:
@@ -349,16 +423,37 @@ function Calendar({userInfo}) {
                 name="hours_of_sleep"
                 value={healthStatusInput.hours_of_sleep}
                 onChange={handleHealthStatusInputChange}
+                placeholder="e.g. 9"
               />
+              <span> hours</span>
             </label>
             <label>
               Stress Level:
-              <input
+              {/* <input
                 type="number"
+                name="stress_level"
+                value={healthStatus[formatDate(selectedDate.toDateString())] ? healthStatus[formatDate(selectedDate.toDateString())].stress_level : healthStatusInput.stress_level}
+                onChange={handleHealthStatusInputChange}
+                placeholder="Rate your stress level from 1 to 10"
+              /> */}
+               <select
                 name="stress_level"
                 value={healthStatusInput.stress_level}
                 onChange={handleHealthStatusInputChange}
-              />
+              > 
+                <option disabled>Rate your stress from 1 to 10</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+              </select>
+              <abbr title="Rate from 1 to 10, where 1 is the lowest and 10 is the highest.">?</abbr>
             </label>
             <label>
               Water Intake:
@@ -367,7 +462,9 @@ function Calendar({userInfo}) {
                 name="water_intake"
                 value={healthStatusInput.water_intake}
                 onChange={handleHealthStatusInputChange}
+                placeholder="e.g. 5"
               />
+              <span> cups</span>
             </label>
             <label>
               Diet:
@@ -376,10 +473,9 @@ function Calendar({userInfo}) {
                 value={healthStatusInput.diet}
                 onChange={handleHealthStatusInputChange}
               > 
-                <option>Choose Your Diet Type</option>
-                <option value="only meat">Only Meat</option>
-                <option value="only vegetables">Only Vegetables</option>
-                <option value="meat and vegetables">Meat and Vegetables</option>
+                <option disabled>Choose Your Diet Type</option>
+                <option value="healthy">Healthy</option>
+                <option value="Unhealthy">Unhealthy</option>
               </select>
             </label>
             <label>
@@ -389,27 +485,53 @@ function Calendar({userInfo}) {
                 name="exercise_minutes"
                 value={healthStatusInput.exercise_minutes}
                 onChange={handleHealthStatusInputChange}
+                placeholder="e.g. 60"
               />
+              <span>minutes</span>
             </label>
             <label>
               Mood:
-              <input
+              {/* <input
                 type="text"
                 name="mood"
                 value={healthStatusInput.mood}
                 onChange={handleHealthStatusInputChange}
-              />
+              /> */}
+              <select
+                name="mood"
+                value={healthStatusInput.mood}
+                onChange={handleHealthStatusInputChange}
+              > 
+                <option disabled>Rate your mood</option>
+                <option value="Happy">Happy</option>
+                <option value="Sad">Sad</option>
+                <option value="Neutral">Neutral</option>
+                <option value="Excited">Excited</option>
+                <option value="Tired">Tired</option>
+              </select>
             </label>
             <label>
               Weather Condition:
-              <input
+              {/* <input
                 type="text"
                 name="weather_condition"
                 value={healthStatusInput.weather_condition}
                 onChange={handleHealthStatusInputChange}
-              />
+              /> */}
+              <select
+                name="weather_condition"
+                value={healthStatusInput.weather_condition}
+                onChange={handleHealthStatusInputChange}
+              > 
+                <option disabled>Please select your city's weather</option>
+                <option value="Sunny">Sunny</option>
+                <option value="Rainy">Rainy</option>
+                <option value="Cloudy">Cloudy</option>
+                <option value="Windy">Windy</option>
+                <option value="Snowy">Snowy</option>
+              </select>
             </label>
-            {healthStatus[selectedDate.toDateString()] ? (
+            {healthStatus[formatDate(selectedDate.toDateString())] ? (
               <button type="submit">Modify</button>
             ) : (
               <button type="submit">Record</button>
