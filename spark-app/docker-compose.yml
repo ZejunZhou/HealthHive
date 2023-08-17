@@ -3,48 +3,48 @@ version: '3'
 services:
   flask-app:
     build: ./flask_server
-    depends_on:
-      - spark-master
+    # depends_on:
+    #   - spark-master
     ports:
       - "4002:4002"
     networks:
-      - spark-backend
+      # - spark-backend
       - my_shared_network
       
   
-  spark-master:
-    image: bitnami/spark:3.2.2
-    environment:
-      - SPARK_MODE=master
-    container_name: spark-master
-    ports:
-      - "8080:8080"
-    networks:
-      - spark-backend
+  # spark-master:
+  #   image: bitnami/spark:3.2.2
+  #   environment:
+  #     - SPARK_MODE=master
+  #   container_name: spark-master
+  #   ports:
+  #     - "8080:8080"
+  #   networks:
+  #     - spark-backend
 
-  spark-worker-1:
-    image: bitnami/spark:3.2.2
-    container_name: spark-worker-1
-    depends_on:
-      - spark-master
-    environment:
-      - SPARK_MODE=worker
-      - SPARK_MASTER=spark://spark-master:7077
-    networks:
-      - spark-backend
+  # spark-worker-1:
+  #   image: bitnami/spark:3.2.2
+  #   container_name: spark-worker-1
+  #   depends_on:
+  #     - spark-master
+  #   environment:
+  #     - SPARK_MODE=worker
+  #     - SPARK_MASTER=spark://spark-master:7077
+  #   networks:
+  #     - spark-backend
 
-  spark-worker-2:
-    image: bitnami/spark:3.2.2
-    container_name: spark-worker-2
-    depends_on:
-      - spark-master
-    environment:
-      - SPARK_MODE=worker
-      - SPARK_MASTER=spark://spark-master:7077
-    networks:
-      - spark-backend
+  # spark-worker-2:
+  #   image: bitnami/spark:3.2.2
+  #   container_name: spark-worker-2
+  #   depends_on:
+  #     - spark-master
+  #   environment:
+  #     - SPARK_MODE=worker
+  #     - SPARK_MASTER=spark://spark-master:7077
+  #   networks:
+  #     - spark-backend
 
 networks:
-  spark-backend:
+  # spark-backend:
   my_shared_network:
     external: true

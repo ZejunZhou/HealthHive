@@ -12,3 +12,4 @@ protobuf==3.20.3
 six==1.16.0
 Werkzeug==2.2.3
 pyspark==3.2.2
+numpy
