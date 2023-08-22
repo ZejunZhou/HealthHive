@@ -1,32 +1,28 @@
+import React from 'react';
 import { Link } from "react-router-dom";
+import styles from './navbar.module.css';
 
-/**
- * This function renders the links of our feature components
- */
-function Navbar({children }) {
+function Navbar({ children }) {
   return (
-    <header>
-      <nav>
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/healthlog">Health Logs</Link>
-          </li>
-          <li>
-            <Link to="/visualization">Health Visualization</Link>
-          </li>
-          <li>
-            <Link to="/forcast">Wellness Forecast</Link>
-          </li>
-          <li>
-            <Link to="/chat">Health Assistant</Link>
-          </li>
-        </ul>
-        {children} 
-      </nav>
-    </header>
+    <div>
+      {/* Sidebar */}
+      <div id={styles['sidebar-wrapper']}>
+        <div className={styles['sidebar-heading']}>HealthHive</div>
+        <div>
+          <div><Link className={styles['sidebar-link']} to="/home">Home</Link></div>
+          <div><Link className={styles['sidebar-link']} to="/healthlog">Health Logs</Link></div>
+          <div><Link className={styles['sidebar-link']} to="/visualization">Health Visualization</Link></div>
+          <div><Link className={styles['sidebar-link']} to="/forcast">Wellness Forecast</Link></div>
+          <div><Link className={styles['sidebar-link']} to="/chat">Health Assistant</Link></div>
+        </div>
+      </div>
+      {/* /#sidebar-wrapper */}
+
+      {/* Page Content */}
+      <div>
+        {children}
+      </div>
+    </div>
   );
 }
 

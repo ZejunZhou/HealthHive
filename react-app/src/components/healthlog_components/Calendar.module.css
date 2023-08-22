@@ -1,17 +1,22 @@
 .calendar-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  margin-top: 20px;
+  padding-top: 20px;
+  background-color: white;
 }
 
 .calendar {
   width: 100%;
-  max-width: 400px;
-  background-color: #f2f2f2;
+  background-color: white;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-title{
+  text-align: center;
+  color:#51b6b6;
+  font-weight: 700;
 }
 
 .calendar-header {
@@ -22,7 +27,7 @@
 }
 
 .today-btn {
-  background-color: #4287f5;
+  background-color: #51b6b6;
   color: #fff;
   border: none;
   padding: 5px 10px;
@@ -30,9 +35,37 @@
   cursor: pointer;
 }
 
+.custom-abbr {
+    position: relative;
+    cursor: help; 
+}
+
+.custom-abbr:hover::before {
+    content: attr(data-title);
+    background-color: #51b6b6;
+    color: #fff;
+    border-radius: 3px;
+    padding: 2px 5px;
+    position: absolute;
+    z-index: 1000;
+    top: -25px; 
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap; 
+    opacity: 0;
+    transition: opacity 0.2s; 
+    pointer-events: none; 
+}
+
+.custom-abbr:hover::before {
+    opacity: 1; 
+}
+
+
 .current-month {
   font-size: 18px;
   font-weight: bold;
+  color:#51b6b6;
 }
 
 .calendar-navigation {
@@ -43,12 +76,13 @@
 
 .prev-btn,
 .next-btn {
-  background-color: #fff;
+  background-color: #51b6b6;
   border: none;
   font-size: 24px;
   padding: 5px 10px;
   border-radius: 4px;
   cursor: pointer;
+  color:white;
 }
 
 .calendar-dates {
@@ -69,7 +103,7 @@
 }
 
 .today {
-  background-color: #4287f5;
+  background-color: #99d9d9;
   color: #fff;
 }
 
@@ -89,7 +123,7 @@
 
 .report-health-btn,
 .modify-record-btn {
-  background-color: #4287f5;
+  background-color: #51b6b6;
   color: #fff;
   border: none;
   padding: 5px 10px;
@@ -132,7 +166,7 @@
 }
 
 .health-status-form button {
-  background-color: #4287f5;
+  background-color: #51b6b6;
   color: #fff;
   border: none;
   padding: 5px 10px;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./Calendar.css";
+import styles from './Calendar.module.css'
 import axios from 'axios';
 
 function Calendar({userInfo}) {
@@ -47,6 +47,15 @@ function Calendar({userInfo}) {
       const dateStr = formatDate(date.toDateString());
       if (healthStatus[dateStr]) {
         setHealthStatusInput(healthStatus[dateStr]);
+        /**check if there is a blood pressure */
+        if ((healthStatus[dateStr].blood_pressure)){
+           setSystolic((healthStatus[dateStr].blood_pressure).split('/')[0])
+           setDiastolic((healthStatus[dateStr].blood_pressure).split('/')[1])
+        }else{
+           setSystolic('')
+           setDiastolic('')
+        }
+       
       } else {
         // Reset to default values if no record for that day
         setHealthStatusInput({
@@ -64,6 +73,8 @@ function Calendar({userInfo}) {
           mood: "Happy",
           weather_condition: "Sunny",
         });
+        setSystolic('')
+        setDiastolic('')
       }
     }
 };
@@ -266,6 +277,11 @@ function Calendar({userInfo}) {
                 ...healthStatusInput,
                 blood_pressure: `${e.target.value}/${diastolic}`
             });
+        }else{
+          setHealthStatusInput({
+                ...healthStatusInput,
+                blood_pressure: ''
+            });
         }
     };
 
@@ -276,30 +292,35 @@ function Calendar({userInfo}) {
                 ...healthStatusInput,
                 blood_pressure: `${systolic}/${e.target.value}`
             });
+        }else{
+          setHealthStatusInput({
+                ...healthStatusInput,
+                blood_pressure: ''
+            });
         }
     };
 
   return (
-    <div className="calendar-container">
-      <h1>Calendar</h1>
-      <div className="calendar">
-        <div className="calendar-header">
-          <button className="today-btn" onClick={() => setCurrentDate(new Date())}>
+    <div className={styles["calendar-container"]}>
+      <h1 className={styles["calendar-title"]}>Health Calendar</h1>
+      <div className={styles["calendar"]}>
+        <div className={styles["calendar-header"]}>
+          <button className={styles["today-btn"]} onClick={() => setCurrentDate(new Date())}>
             Today
           </button>
-          <h2 className="current-month">
+          <h2 className={styles["current-month"]}>
             {currentDate.toLocaleString("default", { month: "long" })} {currentDate.getFullYear()}
           </h2>
         </div>
-        <div className="calendar-navigation">
-          <button className="prev-btn" onClick={handlePreviousMonth}>
+        <div className={styles["calendar-navigation"]}>
+          <button className={styles["prev-btn"]} onClick={handlePreviousMonth}>
             &lt;
           </button>
-          <button className="next-btn" onClick={handleNextMonth}>
+          <button className={styles["next-btn"]} onClick={handleNextMonth}>
             &gt;
           </button>
         </div>
-        <div className="calendar-dates">
+        <div className={styles["calendar-dates"]}>
           {calendarDates.map((date) => {
             const dateStr = formatDate(date.toDateString());
             const healthStatusReport =  healthStatus[dateStr] || healthStatus_db[dateStr];
@@ -307,31 +328,28 @@ function Calendar({userInfo}) {
             const isToday = date.toDateString() === new Date().toDateString();
             const isSelected = selectedDate && date.toDateString() === selectedDate.toDateString();
 
+             const calandar_css = [
+                  styles['calendar-date'],
+                  isToday ? styles.today : '',
+                  isSelected ? styles.selected : ''
+              ].join(' ');
+
             return (
               <div
                 key={date.toISOString()}
                 onClick={() => handleDateClick(date)}
-                className={`calendar-date${isToday ? " today" : ""}${isSelected ? " selected" : ""}`}
+                className={calandar_css}
               >
-                <div className="date">{date.getDate()}</div>
+                <div className={styles["date"]}>{date.getDate()}</div>
                 {healthStatusReport && (
-                  <div className="health-status">
-                    <p>Heart Rate: {healthStatusReport.heart_rate}</p>
-                    <p>Weight: {healthStatusReport.weight}</p>
-                    <p>Blood Pressure: {healthStatusReport.blood_pressure}</p>
-                    <p>Body Temperature: {healthStatusReport.body_temperature}</p>
-                    <p>Hour of Sleep: {healthStatusReport.hours_of_sleep}</p>
-                    <p>Stress Level: {healthStatusReport.stress_level}</p>
-                    <p>Water Intake: {healthStatusReport.water_intake}</p>
-                    <p>Diet: {healthStatusReport.diet}</p>
-                    <p>Exercise Minutes: {healthStatusReport.exercise_minutes}</p>
-                    <p>Mood: {healthStatusReport.mood}</p>
-                    <p>Weather: {healthStatusReport.weather_condition}</p>
+                  <div className={styles["health-status"]}>
+                    <i className={`fa-regular fa-circle-check`}></i>
+                    <p>Successfully reported</p>
                   </div>
                 )}
                 {!healthStatusReport && (
                   <button
-                    className="report-health-btn"
+                    className={styles["report-health-btn"]}
                     onClick={() => handleReportHealthStatus()}
                   >
                     Report Health
@@ -339,7 +357,7 @@ function Calendar({userInfo}) {
                 )}
                 {healthStatusReport && (
                   <button
-                    className="modify-record-btn"
+                    className={styles["modify-record-btn"]}
                     onClick={() => handleModifyRecord()}
                   >
                     Modify Record
@@ -347,7 +365,7 @@ function Calendar({userInfo}) {
                 )}
                 {healthStatusReport && selectedDate && date.toDateString() === selectedDate.toDateString() && (
                   <button
-                    className="modify-record-btn"
+                    className={styles["modify-record-btn"]}
                     onClick={() => handleDeleteRecord()}
                   >
                     Delete Record
@@ -359,7 +377,7 @@ function Calendar({userInfo}) {
         </div>
       </div>
       {showHealthStatusForm && (
-        <div className="health-status-form">
+        <div className={styles["health-status-form"]}>
           {healthStatus[formatDate(selectedDate.toDateString())] ? (
           <h2>Modify your record</h2> )
           : (<h2>Record your health</h2> )
@@ -453,7 +471,7 @@ function Calendar({userInfo}) {
                 <option value="9">9</option>
                 <option value="10">10</option>
               </select>
-              <abbr title="Rate from 1 to 10, where 1 is the lowest and 10 is the highest.">?</abbr>
+              <abbr className={styles['custom-abbr']} data-title="Rate from 1 to 10, where 1 is the lowest and 10 is the highest.">How to Rate ?</abbr>
             </label>
             <label>
               Water Intake:

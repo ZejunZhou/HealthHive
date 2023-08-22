@@ -14,6 +14,19 @@ const RiskPrediction = ({userInfo}) => {
         const day = date.getDate().toString().padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
+
+    const generateReport = () => {
+        if (todayInput !== null) {
+            axios.post("http://localhost:4002/risk_prediction", todayInput[today])
+            .then((response) => {
+                setRiskPrediction(response.data)
+            })
+            .catch((error) => console.log(error))
+        }
+        // store the prediction result into database
+        //
+    }
+    
     // calculate today's string in format year-month-day
     const today = formatDate(new Date().toDateString())
 
@@ -36,22 +49,33 @@ const RiskPrediction = ({userInfo}) => {
     }, [])
 
     useEffect(() => {
-        if (todayInput !== null) {
-            axios.post("http://localhost:4002/risk_prediction", todayInput[today])
-            .then((response) => {
-                setRiskPrediction(response.data)
-            })
-            .catch((error) => console.log(error))
-        }
+        // if (todayInput !== null) {
+        //     axios.post("http://localhost:4002/risk_prediction", todayInput[today])
+        //     .then((response) => {
+        //         setRiskPrediction(response.data)
+        //     })
+        //     .catch((error) => console.log(error))
+        // }
+        setRiskPrediction(null) // if today's date change, user need to regenerate their report
     }, [todayInput])
 
-    return (<div>
-        <p>diabetes risk is {riskPrediction && riskPrediction.diabetes_risk}</p>
-        <p>hypertension risk is {riskPrediction && riskPrediction.hypertension_risk}</p>
-        <p>fever risk is {riskPrediction && riskPrediction.fever_risk}</p>
-        <p>depression risk is {riskPrediction && riskPrediction.depression_risk}</p>
-        <p>health index is {riskPrediction && riskPrediction.health_index}</p>
-    </div>)
+    
+
+    return (
+    <div>
+        {!riskPrediction ? (
+            <button onClick={generateReport}>Generate my report</button>
+        ) : (
+            <>
+                <p>diabetes risk is {riskPrediction.diabetes_risk}</p>
+                <p>hypertension risk is {riskPrediction.hypertension_risk}</p>
+                <p>fever risk is {riskPrediction.fever_risk}</p>
+                <p>depression risk is {riskPrediction.depression_risk}</p>
+                <p>health index is {riskPrediction.health_index}</p>
+            </>
+        )}
+    </div>
+);
 
 }
 

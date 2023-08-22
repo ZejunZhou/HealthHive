@@ -1,0 +1,12 @@
+.topbar {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 30px 120px;
+    padding-bottom: 0; 
+    background-color: white;
+}
+
+.childrenRight {
+    margin-left:auto; 
+}

@@ -11,7 +11,7 @@ const Logout = ({setLogin, setUserInfo, setUsername, setPassword, setEmail}) => 
         navigate("/")
     }
 
-    return(<button onClick={logout}>Logout</button>)
+    return(<a onClick={logout}>Logout</a>)
 }
 
 export default Logout

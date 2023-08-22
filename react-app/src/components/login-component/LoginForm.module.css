@@ -60,14 +60,15 @@
 
 .box {
   position: relative;
-  background-color: #A0D8B3;
+  background-color: #99d9d9;
   width: 80%;
   height: 50%;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
 .containerButton {
-  margin-top: 10px;
+  margin-top: 15px;
+  margin-bottom: 10px;
   font-size: 16px;
 }
 

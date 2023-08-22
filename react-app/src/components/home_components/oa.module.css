@@ -1,0 +1,152 @@
+/********Element Tag SELECTOR****/
+body{
+    font-family: "Montserrat";
+    font-weight: 400;
+}
+
+button{
+    display: block;
+}
+
+h1,h2,h3,h4,h5,h6{
+    font-family: "Montserrat";
+}
+
+/********Class SELECGOR*****/
+
+.container{
+    padding: 3% 10%;
+    padding-bottom: 5%;
+}
+
+
+/********ID SELECTOR*******/
+#title{
+    background-color: #99d9d9;
+    color: aliceblue;
+}
+
+#features{
+    padding: 5% 1%;
+    z-index: 1;
+    position: relative;
+    background-color: white;
+}
+
+#footer{
+    text-align: center;
+    padding: 50px;
+}
+
+/*******NavBar********/
+
+.navbar-brand{
+    font-family: 'Ubuntu';
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+}
+
+.navbar-brand:hover{
+    color:#51b6b6;
+}
+
+.navbar{
+    padding-bottom: 3.5rem;
+}
+
+.nav-item{
+    padding: 0 1rem;
+}
+
+.nav-link{
+    font-family: "Montserrat";
+    font-size: 1.1rem;
+    color:white;
+}
+
+/****Title class*******/
+
+#title h1{
+    font-weight: 900;
+    font-size: 3.5rem;
+    line-height: 1.5;
+}
+
+.download-button{
+    margin-top: 10%;
+    margin-right: 3%;
+    margin-bottom: 10%;
+    background-color: #51b6b6;
+    border: none;
+}
+
+.download-button:hover{
+   background-color: white;
+}
+
+
+.download-link{
+    color:white;
+    text-decoration: none;
+}
+
+.download-link:hover{
+   color:black;
+}
+
+.title-img{
+    /**position: relative;
+    left:10%;**/
+    position: absolute;
+    width: 30%;
+    left: 65%;
+}
+
+/**when viewport's max-width is 1000px or smaller**/
+@media(max-width:1000px){
+    .title-img{
+        position: static;
+        transform: rotate(0);
+        width: 50%;
+    }
+
+    #title{
+        text-align: center;
+    }
+
+}
+
+/******Feature class *******/
+
+.feature-icon{
+    color: #99d9d9;
+    margin: 5%;
+}
+
+.feature-icon:hover{
+    color:#51b6b6;
+}
+
+.feature-heading{
+    font-family:"Montserrat";
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.feature-paragraph{
+    color: #8f8f8f;
+}
+
+.feature-content{
+    text-align: center;
+    padding: 0 2%;
+    margin: auto;
+}
+
+/*******Footer Class*******/
+
+#footer i{
+    padding: 10px;
+}

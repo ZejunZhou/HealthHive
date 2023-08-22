@@ -1,10 +1,9 @@
 /* HealthDataChart.css */
 .chartContainer {
     font-family: 'Arial', sans-serif;
-    background-color: #f4f4f4;
+    background-color: #ffffff;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin: 20px auto;
     max-width: 1000px;
 }
@@ -14,3 +13,60 @@
     color: #333;
     margin-bottom: 20px;
 }
+
+.from-label{
+    margin-left: 18%;
+    margin-right: 1%;
+}
+
+.to-label{
+    margin-right:1%
+}
+
+/* Search bar container */
+.search-bar {
+    gap: 10px;
+    padding: 10px 20px;
+    width: 80%; 
+    margin-left: 7%;
+
+}
+
+/* Styled select component */
+.visual-select {
+    border: 1px solid #e1e1e1;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-right: 1%;
+    background-color: #ffffff;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.visual-select:hover {
+    border-color: #c1c1c1;
+}
+
+.visual-select:focus {
+    border-color: #a1a1a1;
+    outline: none;
+}
+
+/* Date input fields */
+.search-bar input[type="date"] {
+    border: 1px solid #e1e1e1;
+    border-radius: 4px;
+    padding: 8px;
+    margin-right:1%;
+    transition: border-color 0.3s;
+}
+
+.search-bar input[type="date"]:hover {
+    border-color: #c1c1c1;
+}
+
+.search-bar input[type="date"]:focus {
+    border-color: #a1a1a1;
+    outline: none;
+}
+

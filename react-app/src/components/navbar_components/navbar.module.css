@@ -1,0 +1,36 @@
+.wrapper{
+    display: flex;
+}
+
+#sidebar-wrapper {
+  min-height: 800px;
+  height: 100%;
+  width: 250px;
+  background-color: #51b6b6;
+  font-family: 'Arial', sans-serif;
+  padding-top: 2rem;
+}
+
+.sidebar-heading {
+  padding: 15px;
+  font-size: 2rem;
+  background-color: #51b6b6;
+  font-weight: bold;
+  color: #FFFFFF;
+  text-align: center;
+}
+
+.sidebar-link {
+  display: block;
+  font-size:1rem;
+  text-align: center;
+  padding: 1.5rem 1.25rem;
+  color: aliceblue;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.sidebar-link:hover {
+  color: #FFFFFF;
+  text-decoration: underline;
+}

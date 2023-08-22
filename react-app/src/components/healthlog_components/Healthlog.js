@@ -7,7 +7,7 @@ import Calendar from "./Calendar"
 function HealthLog({userInfo}){
     console.log(userInfo)
     return (<div>
-        <h1>Welcome to health log {(userInfo.name).toLowerCase()}, your email is {(userInfo.email)}</h1>
+        {/* <h1>Welcome to health log {(userInfo.name).toLowerCase()}, your email is {(userInfo.email)}</h1> */}
         <Calendar userInfo={userInfo}/>
         </div>)
 }

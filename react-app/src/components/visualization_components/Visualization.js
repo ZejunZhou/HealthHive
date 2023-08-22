@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import HealthDataChart from "./HealthDataChart";
+import styles from './HealthDataChart.module.css'
 
 function Visualization({ userInfo }) {
     const [dataArray, setDataArray] = useState(null);
@@ -174,8 +175,8 @@ const aggregateDataCalculation = (data, range) => {
 
     return (
         <div>
-            <h1>Welcome to Visualization</h1>
-            <select value={selectedMetric} onChange={(e) => setSelectedMetric(e.target.value)}>
+        <div className={styles['search-bar']}>
+            <select value={selectedMetric} onChange={(e) => setSelectedMetric(e.target.value)} className={`${styles['visual-select']}`}>
                 <option value="heart_rate">Heart Rate</option>
                 <option value="weight">Weight</option>
                 <option value="blood_pressure">Blood Pressure</option>
@@ -185,12 +186,12 @@ const aggregateDataCalculation = (data, range) => {
                 <option value="water_intake">Water Intake</option>
                 <option value="exercise_minutes">Exercise Minutes</option>
             </select>
-            <select value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>
+            <select value={timeRange} onChange={(e) => setTimeRange(e.target.value)} className={styles['visual-select']}>
                 <option value="daily">Daily</option>
                 <option value="monthly">Monthly</option>
                 <option value="yearly">Yearly</option>
             </select>
-            <p>startDate</p>
+            <span className={styles['from-label']}>From</span>
             <input 
                 type="date" 
                 value={userInputStartDate} 
@@ -201,7 +202,7 @@ const aggregateDataCalculation = (data, range) => {
                     }
                 }} 
             />
-            <p>endDate</p>
+            <span className={styles['to-label']}>to</span>
             <input 
                 type="date" 
                 value={userInputEndDate} 
@@ -212,6 +213,7 @@ const aggregateDataCalculation = (data, range) => {
                     }
                 }} 
             />
+            </div>
             {loading && <p>Loading...</p>}
             {error && <p>{error}</p>}
             <HealthDataChart data={displayedData} metric={selectedMetric}/>
