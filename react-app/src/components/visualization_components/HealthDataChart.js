@@ -46,10 +46,17 @@ const HealthDataChart = ({ data, metric }) => {
         <div className={styles.chartContainer}>
             <h1>Your {metricDetail.name} Data Trends</h1>
             <ResponsiveContainer width="100%" height={450}>
-              <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <LineChart data={data} margin={{ top: 5, right: 30, left: 50, bottom: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" tick={{ fontSize: 12 }} label='date'/>
-                <YAxis domain={[minY, maxY]} label={metricDetail.unit}/>
+                <XAxis 
+                    dataKey="date" 
+                    tick={{ fontSize: 12 }} 
+                    label={{ value: 'date', position: 'insideBottomRight', offset: 0 }}
+                />
+                <YAxis 
+                    domain={[minY, maxY]} 
+                    label={{ value: metricDetail.unit, angle: -90, position: 'insideLeft', offset: 10 }}
+                />
                 <Tooltip />
                 <Legend />
                 {metric === 'blood_pressure' ? (
@@ -64,6 +71,7 @@ const HealthDataChart = ({ data, metric }) => {
             </ResponsiveContainer>
         </div>
     );
+
 };
 
 export default HealthDataChart;

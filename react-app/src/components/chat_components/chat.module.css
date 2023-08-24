@@ -1,0 +1,15 @@
+.chat-container{
+    display: flex;
+    height: 80%;
+    justify-content: center;
+    margin-top: 2%;
+}
+
+.chat-box{
+    width: 80%;
+}
+
+.chat-color{
+    color: #51b6b6 !important;
+}
+

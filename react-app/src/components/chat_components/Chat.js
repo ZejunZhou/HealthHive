@@ -2,6 +2,8 @@ import { useState } from 'react'
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import { MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator } from '@chatscope/chat-ui-kit-react';
 import configData from '../../configData';
+import styles from './chat.module.css'
+import './chatoverride.css'
 
 const API_KEY = configData.GPT_API_KEY;
 // "Explain things like you would to a 10 year old learning how to code."
@@ -93,8 +95,8 @@ function Chat() {
   }
 
   return (
-    <div className="App">
-      <div style={{ position:"relative", height: "800px", width: "700px"  }}>
+    <div className={styles['chat-container']}>
+      <div className={styles['chat-box']}>
         <MainContainer>
           <ChatContainer>       
             <MessageList 
@@ -106,7 +108,7 @@ function Chat() {
                 return <Message key={i} model={message} />
               })}
             </MessageList>
-            <MessageInput placeholder="Type message here" onSend={handleSend} />        
+            <MessageInput placeholder="Type message here" onSend={handleSend}/>        
           </ChatContainer>
         </MainContainer>
       </div>
