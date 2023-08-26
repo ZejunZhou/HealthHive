@@ -5,11 +5,7 @@ import styles from './RiskPrediction.module.css';
 const RiskPrediction = ({userInfo}) => {
 
     const [todayInput, setTodayInput] = useState(null) // object hold user today's input
-    const [riskPrediction, setRiskPrediction] = useState({diabetes_risk:'37',
-                    hypertension_risk:'26',
-                    fever_risk:'45',
-                    depression_risk:'59',
-                    health_index:'80'}) // object hold risk prediction
+    const [riskPrediction, setRiskPrediction] = useState(null) // object hold risk prediction
     const [isButtonDisabled, setIsButtonDisabled] = useState(true); // not allow to click generate report unless user fill all field
     const [isModalVisible, setModalVisible] = useState(false);
 
