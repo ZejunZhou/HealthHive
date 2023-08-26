@@ -1,5 +1,6 @@
 import RiskPrediction from "./Risk-Prediction"
 import TestSpark from "./Test-Spark"
+// import styles from './Forcast.module.css'
 
 /**
  * 
@@ -7,8 +8,7 @@ import TestSpark from "./Test-Spark"
  */
 function Forcast({userInfo}){
     return <div>
-        <h1>Welcome to the Forcast page!</h1>
-        <TestSpark />
+        {/* <TestSpark /> */}
         <RiskPrediction userInfo={userInfo}/>
     </div>
 }

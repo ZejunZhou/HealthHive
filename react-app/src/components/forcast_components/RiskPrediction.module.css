@@ -1,0 +1,156 @@
+.initial-container{
+    display: flex;
+    width: 100%;
+    height:100px;
+    justify-content: center;
+    align-items: center;
+}
+
+.initial-text{
+    padding-top: 2%;
+    text-align: center;
+}
+
+.initial-button{
+    background-color: #51b6b6;
+    color: white;
+}
+
+.initial-button:hover{
+    background-color: #51b6b6;
+    color: white;
+}
+
+.title{
+    text-align: center;
+    padding: 2%;
+}
+
+.riskPredictionContainer {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.riskPredictions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.riskItem {
+    display: flex;
+    align-items: center;
+    padding: 80px 0;
+}
+
+.progressBar {
+    flex-grow: 1;
+    height: 20px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    margin-left: 10px;
+}
+
+.healthy {
+    height: 100%;
+    background-color: #51b6b6;
+    border-radius: inherit;
+    transition: width 0.2s ease-in;
+}
+
+
+.moderate {
+    height: 100%;
+    background-color: #FFC436;
+    border-radius: inherit;
+    transition: width 0.2s ease-in;
+}
+
+.risk{
+    height: 100%;
+    background-color: #F6635C;
+    border-radius: inherit;
+    transition: width 0.2s ease-in;
+}
+
+.label-healthy{
+    width: 30%;
+    height: 10px;
+    background-color: #51b6b6;
+    border-radius: 10px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 1%;
+}
+
+.label-moderate{
+    width: 30%;
+    height: 10px;
+    background-color: #FFC436;
+    border-radius: 10px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 1%;
+}
+
+.label-risky{
+    width: 30%;
+    height: 10px;
+    background-color: #F6635C;
+    border-radius: 10px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 1%;
+}
+
+.label-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.label-text{
+    text-align: center;
+}
+
+.modal-link{
+    display: block;
+    color: #51b6b6;
+    text-align: center;
+}
+
+.modal-link:hover{
+    color: #51b6b6;
+    text-decoration: underline;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modalContent {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 5px;
+    width: 70%;
+    max-width: 600px;
+    position: relative;
+}
+
+.closeButton {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+}
+
+

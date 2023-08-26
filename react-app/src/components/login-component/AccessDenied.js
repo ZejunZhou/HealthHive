@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styles from './AccessDenied.module.css'
 
 const AccessDenied = () => {
   const navigate = useNavigate();
@@ -23,9 +24,9 @@ const AccessDenied = () => {
   }, []); 
 
   return (
-    <div>
-      <h1>You should log in to access your data.</h1>
-      <p>Redirecting to homepage in {countdown} seconds...</p>
+    <div className={styles['access-container']}>
+      <h1 className={styles['access-text']}>Unable to access your service unless you login</h1>
+      <p className={styles['access-text']}>Redirecting to homepage in {countdown} seconds...</p>
     </div>
   );
 };

@@ -110,6 +110,82 @@ def user_insertion():
     except Exception as e:
         return str(e)
 
+@app.route('/insert_prediction', methods = ['POST'])
+def insert_prediction():
+    session.execute("""USE health_hive""")
+    session.execute("""
+    CREATE TABLE IF NOT EXISTS health_hive.prediction(
+        email text,
+        date text,
+        diabetes_risk text,
+        hypertension_risk text,
+        fever_risk text,
+        depression_risk text,
+        health_index text,
+        PRIMARY KEY (email, date)
+    )
+    """)
+    try:
+        email = request.json.get("email")
+        date = request.json.get('date')
+        diabetes_risk = request.json.get('diabetes_risk')
+        hypertension_risk = request.json.get("hypertension_risk")
+        fever_risk = request.json.get('fever_risk')
+        depression_risk = request.json.get('depression_risk')
+        health_index = request.json.get("health_index")
+    except Exception as e:
+        return str(e)
+    
+    session.execute(
+            """
+            INSERT INTO health_hive.prediction (email, date, diabetes_risk, hypertension_risk, fever_risk, depression_risk, health_index)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """,
+            (email, date, diabetes_risk, hypertension_risk, fever_risk, depression_risk, health_index)
+        )
+
+    return "prediction insert successfully"
+
+## function get prediction metrics by date
+@app.route('/get_prediction_metrics_by_date')
+def get_prediction_metrics_by_date():
+    session.execute("""
+    CREATE TABLE IF NOT EXISTS health_hive.prediction(
+        email text,
+        date text,
+        diabetes_risk text,
+        hypertension_risk text,
+        fever_risk text,
+        depression_risk text,
+        health_index text,
+        PRIMARY KEY (email, date)
+    )
+    """)
+    email = request.args.get('email')
+    date = request.args.get('date')
+    query = f"SELECT * FROM health_hive.prediction WHERE email=%s AND date=%s"
+    rows = session.execute(query, [email, date])
+    if rows:
+        for row in rows:
+            return jsonify({"email": row.email, 'date':row.date, 'diabetes_risk':row.diabetes_risk, "hypertension_risk":row.hypertension_risk, "fever_risk":row.fever_risk, "depression_risk":row.depression_risk, "health_index":row.health_index})
+    else:
+        return jsonify({'message':"No Report has generated"}), 400
+
+## function get health_index by date range
+@app.route('/get_health_index_by_range')
+def get_health_index_by_range():
+    email = request.args.get('email')
+    date = request.args.get('date')
+    ## fetch all health_index include today's date
+    query = f"SELECT health_index FROM health_hive.prediction WHERE email=%s AND date <= %s"
+    rows = session.execute(query, [email, date])
+    if rows:
+        for row in rows:
+            return jsonify({"email": row.email, 'date':row.date, "health_index":row.health_index})
+    else:
+        return jsonify({'message':"No index has generated"})
+
+
 ## Method get user info by EMAIL for sign in verification
 @app.route('/get_user', methods = ['GET'])
 def get_user():
@@ -359,20 +435,19 @@ def show_logs():
             for row in rows]
     return jsonify(data)
 
-@app.route('/show_user')
-def show_user():
-    rows = session.execute("""SELECT * FROM health_hive.user""")
-    data = [{'email': row.email, "username":row.username, "password":row.password}
-            for row in rows]
-    return jsonify(data)
+# @app.route('/show_user')
+# def show_user():
+#     rows = session.execute("""SELECT * FROM health_hive.user""")
+#     data = [{'email': row.email, "username":row.username, "password":row.password}
+#             for row in rows]
+#     return jsonify(data)
 
-@app.route('/show_table')
-def show_table():
-    rows = session.execute("SELECT * FROM weather.stations")
-    data = [{'id': row.id, 'name': row.name, 'date': row.date, 'temperature': row.temperature}
-            for row in rows]
-    return jsonify(data)
-
+# @app.route('/show_table')
+# def show_table():
+#     rows = session.execute("SELECT * FROM weather.stations")
+#     data = [{'id': row.id, 'name': row.name, 'date': row.date, 'temperature': row.temperature}
+#             for row in rows]
+#     return jsonify(data)
 
 if __name__ == '__main__':
     app.run(port=4001)

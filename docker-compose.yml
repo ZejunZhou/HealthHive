@@ -32,29 +32,29 @@ services:
       - CASSANDRA_CLUSTER_NAME=my-cluster
       - CASSANDRA_SEEDS=cassandra-seed
 
-  cassandra-worker1:
-    image: cassandra:latest
-    ports:
-      - 9043:9043
-    networks:
-      - cassandra-network
-    environment:
-      - CASSANDRA_CLUSTER_NAME=my-cluster
-      - CASSANDRA_SEEDS=cassandra-seed
-    depends_on:
-      - cassandra-seed
+  # cassandra-worker1:
+  #   image: cassandra:latest
+  #   ports:
+  #     - 9043:9043
+  #   networks:
+  #     - cassandra-network
+  #   environment:
+  #     - CASSANDRA_CLUSTER_NAME=my-cluster
+  #     - CASSANDRA_SEEDS=cassandra-seed
+  #   depends_on:
+  #     - cassandra-seed
 
-  cassandra-worker2:
-    image: cassandra:latest
-    ports:
-      - 9044:9044
-    networks:
-      - cassandra-network
-    environment:
-      - CASSANDRA_CLUSTER_NAME=my-cluster
-      - CASSANDRA_SEEDS=cassandra-seed
-    depends_on:
-      - cassandra-seed
+  # cassandra-worker2:
+  #   image: cassandra:latest
+  #   ports:
+  #     - 9044:9044
+  #   networks:
+  #     - cassandra-network
+  #   environment:
+  #     - CASSANDRA_CLUSTER_NAME=my-cluster
+  #     - CASSANDRA_SEEDS=cassandra-seed
+  #   depends_on:
+  #     - cassandra-seed
 
 networks:
   mynetwork:
