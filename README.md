@@ -22,7 +22,12 @@ Please check the project documentation at [here](./HealthHive_Requirement_Docume
 
 ![Structure](./readme-reference/HealthHive-structure.png)
 
-## Get Start
+
+# Start
+
+To run the app with all features, you need to build your docker container with two steps.
+
+## Get Start (Frontend, Backend, DB)
 
 At Directory **HealthHive**, build up docker containers use following command
 
@@ -53,9 +58,19 @@ docker logs <-container id of flask backend container->
 Access React app at **localhost:3000**
 
 
-## Testing (temporary)
+## Get Start (Spark Cluster)
 
-Check Flask app's stauts at **localhost:4001** 
-You need to see Hello Flask to have flask app running
+At Directory **spark-app**, build up docker containers use following command
 
-Feel free to check http://localhost:4001/showtable to check cassandra table's result
+```
+docker-compose build 
+```
+
+Then run build up containers communication in background using following command
+
+```
+docker-compose up -d
+```
+
+**Notice:** Spark Cluster require tremendous resources to initialize. The default setting of docker container is using Spark locally. But feel free to try the Spark cluster setting by editing the comments from docker-compose file!
+
