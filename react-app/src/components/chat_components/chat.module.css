@@ -13,3 +13,13 @@
     color: #51b6b6 !important;
 }
 
+.header{
+    font-weight: 700;
+    text-align: center;
+    color:#51b6b6;
+}
+
+.container{
+    height: 100%;
+}
+

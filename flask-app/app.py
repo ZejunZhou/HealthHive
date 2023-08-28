@@ -174,16 +174,30 @@ def get_prediction_metrics_by_date():
 ## function get health_index by date range
 @app.route('/get_health_index_by_range')
 def get_health_index_by_range():
+    session.execute("""
+    CREATE TABLE IF NOT EXISTS health_hive.prediction(
+        email text,
+        date text,
+        diabetes_risk text,
+        hypertension_risk text,
+        fever_risk text,
+        depression_risk text,
+        health_index text,
+        PRIMARY KEY (email, date)
+    )
+    """)
     email = request.args.get('email')
     date = request.args.get('date')
     ## fetch all health_index include today's date
-    query = f"SELECT health_index FROM health_hive.prediction WHERE email=%s AND date <= %s"
+    query = f"SELECT date, health_index FROM health_hive.prediction WHERE email=%s AND date <= %s"
     rows = session.execute(query, [email, date])
     if rows:
+        data = []
         for row in rows:
-            return jsonify({"email": row.email, 'date':row.date, "health_index":row.health_index})
+            data.append({'date':row.date, "health_index":row.health_index})
+        return jsonify(data)
     else:
-        return jsonify({'message':"No index has generated"})
+        return jsonify({'message':"No index has generated"}), 400
 
 
 ## Method get user info by EMAIL for sign in verification

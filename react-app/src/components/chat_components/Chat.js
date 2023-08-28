@@ -95,22 +95,25 @@ function Chat() {
   }
 
   return (
-    <div className={styles['chat-container']}>
-      <div className={styles['chat-box']}>
-        <MainContainer>
-          <ChatContainer>       
-            <MessageList 
-              scrollBehavior="smooth" 
-              typingIndicator={isTyping ? <TypingIndicator content="ChatGPT is typing" /> : null}
-            >
-              {messages.map((message, i) => {
-                console.log(message)
-                return <Message key={i} model={message} />
-              })}
-            </MessageList>
-            <MessageInput placeholder="Type message here" onSend={handleSend}/>        
-          </ChatContainer>
-        </MainContainer>
+    <div className={styles['container']}>
+      <h1 className={styles['header']}>Health Assistant</h1>
+      <div className={styles['chat-container']}>
+        <div className={styles['chat-box']}>
+          <MainContainer>
+            <ChatContainer>       
+              <MessageList 
+                scrollBehavior="smooth" 
+                typingIndicator={isTyping ? <TypingIndicator content="ChatGPT is typing" /> : null}
+              >
+                {messages.map((message, i) => {
+                  console.log(message)
+                  return <Message key={i} model={message} />
+                })}
+              </MessageList>
+              <MessageInput placeholder="Type message here" onSend={handleSend}/>        
+            </ChatContainer>
+          </MainContainer>
+        </div>
       </div>
     </div>
   )

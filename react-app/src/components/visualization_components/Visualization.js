@@ -175,6 +175,7 @@ const aggregateDataCalculation = (data, range) => {
 
     return (
         <div>
+        <h1 className={styles['header']}>Health Visualization</h1>
         <div className={styles['search-bar']}>
             <select value={selectedMetric} onChange={(e) => setSelectedMetric(e.target.value)} className={`${styles['visual-select']}`}>
                 <option value="heart_rate">Heart Rate</option>
