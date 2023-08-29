@@ -131,19 +131,67 @@ function Calendar({userInfo}) {
     setHealthStatus(updatedHealthStatus) // update the status
   }
   
+  // help method to valid data
+  function validateInput(value, min, max) {
+    if (value === "") return true; // allow empty string
+    const numValue = Number(value);
+    return !isNaN(numValue) && numValue >= min && numValue <= max; // make sure number in range and input is a number
+  }
+  
   /**
    * This function is invoked when user submit their health status
    */
   const handleSubmitHealthStatus = (e) => {
     e.preventDefault();
 
-    if (selectedDate) {
+    let heart_rate_validition = false;
+    let weight_validation = false;
+    let systolic_validation = false;
+    let diastolic_validation = false;
+    let body_temperature_validation = false;
+    let hours_of_sleep_validation = false;
+    let water_intake_validation = false;
+    let exercise_minutes_validation = false;
+
+
+    if (healthStatusInput) {
+      // validation heart rate 40 - 200 bmp
+      heart_rate_validition = validateInput(healthStatusInput.heart_rate, 40, 200);
+
+      // validation weight 20 - 200 kg
+      weight_validation = validateInput(healthStatusInput.weight, 20, 200);
+
+      if (healthStatusInput.blood_pressure == ""){
+        systolic_validation = true
+        diastolic_validation = true
+      }else{
+         // validation systolic 40 - 200 mmHg 
+        systolic_validation = validateInput((healthStatusInput.blood_pressure).split('/')[0], 40, 200);
+
+        // validation diastolic 40 - 200 mmHg
+        diastolic_validation = validateInput((healthStatusInput.blood_pressure).split('/')[1], 40, 200);
+      }
+
+      // validation body temperature 34 - 42 °C 
+      body_temperature_validation = validateInput(healthStatusInput.body_temperature, 34, 42);
+
+      // validation hours of sleep 0 - 24 hours 
+      hours_of_sleep_validation = validateInput(healthStatusInput.hours_of_sleep, 0, 24);
+
+      // validation water intake 0 - 8 cups
+      water_intake_validation = validateInput(healthStatusInput.water_intake, 0, 8);
+
+      // validation exercise minutes 0 - 1440 minutes 
+      exercise_minutes_validation = validateInput(healthStatusInput.exercise_minutes, 0, 1440);
+    }
+
+    if (selectedDate && heart_rate_validition && weight_validation && systolic_validation && diastolic_validation && body_temperature_validation && hours_of_sleep_validation && water_intake_validation && exercise_minutes_validation) {
       const updatedHealthStatus = {
         ...healthStatus,
         [formatDate(selectedDate.toDateString())]: {
           ...healthStatusInput,
         },
-      };
+      }
 
       // console.log(healthStatus)
       // console.log(updatedHealthStatus)
@@ -192,6 +240,42 @@ function Calendar({userInfo}) {
         weather_condition: "Sunny",
       });
       setShowHealthStatusForm(false);
+    }else{
+       let heart_rate_message = "Please enter heart rate in range 40 - 200 bmp "
+       let weight_message = "Please enter weight in range 20 - 200 kg "
+       let systolic_message = "Please enter systolic in range 40 - 200 mmHg "
+       let diastolic_message = "Please enter diastolic in range 40 - 200 mmHg "
+       let body_temperature_message = "Please enter body temperature in range 34 - 42 °C "
+       let hours_of_sleep_message = "Please enter hour of sleep in range 0 - 24 hours "
+       let water_intake_message = "Please enter water intake in range 0 - 8 cups "
+       let exercise_minutes_message = "Please enter exercise minutes in range 0 - 1440 minutes "
+
+       if (heart_rate_validition) {
+        heart_rate_message = ""
+       }
+       if(weight_validation){
+        weight_message = ""
+       }
+       if (systolic_validation){
+        systolic_message = ""
+       }
+       if (diastolic_validation){
+        diastolic_message = ""
+       }
+       if (body_temperature_validation){
+        body_temperature_message = ""
+       }
+       if (hours_of_sleep_validation){
+        hours_of_sleep_message = ""
+       }
+       if (water_intake_validation){
+        water_intake_message = ""
+       }
+       if (exercise_minutes_validation){
+        exercise_minutes_message = ""
+       }
+       alert(heart_rate_message + weight_message + systolic_message + diastolic_message + body_temperature_message + hours_of_sleep_message + water_intake_message + exercise_minutes_message)
+       return;
     }
   };
   

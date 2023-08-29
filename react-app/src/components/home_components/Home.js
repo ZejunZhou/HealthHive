@@ -53,7 +53,7 @@ function Home({userInfo}){
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
         for (let i = 0; i < health_index.length; i++) {
-            totalHealthIndex += health_index[i].health_index;
+            totalHealthIndex += Number(health_index[i].health_index);
 
             if (new Date(health_index[i].date) >= oneWeekAgo) {
                 totalPastWeekHealthIndex += Number(health_index[i].health_index);
@@ -79,7 +79,7 @@ function Home({userInfo}){
                 <div className="col-md-4">
                     <div className="card">
                         <div className="card-body">
-                            <h5 className="card-title">Total days</h5>
+                            <h5 className="card-title">Days Reported on Logs</h5>
                             <p className="card-text">{totalDays}</p>
                         </div>
                     </div>
@@ -87,7 +87,7 @@ function Home({userInfo}){
                 <div className="col-md-4">
                     <div className="card">
                         <div className="card-body">
-                            <h5 className="card-title">Average Index</h5>
+                            <h5 className="card-title">Average Health Index</h5>
                             <p className="card-text">{avgIndex}</p>
                         </div>
                     </div>
@@ -95,7 +95,7 @@ function Home({userInfo}){
                 <div className="col-md-4">
                     <div className="card">
                         <div className="card-body">
-                            <h5 className="card-title">Past Week Index</h5>
+                            <h5 className="card-title">Weekly Health Index</h5>
                             <p className="card-text">{pastWeekIndex}</p>
                         </div>
                     </div>
