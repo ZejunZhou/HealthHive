@@ -23,7 +23,9 @@ const LoginPage = ({ isLogin, setLogin, userInfo, setUserInfo}) => {
   };
 
   const MIN_USERNAME_LENGTH = 3;
+  const MAX_USERNAME_LENGTH = 20;
   const MIN_PASSWORD_LENGTH = 8;
+  const MAX_PASSWORD_LENGTH = 16
 
   const signIn = () => {
     const email = (signInEmailRef.current.value).trim();
@@ -41,32 +43,27 @@ const LoginPage = ({ isLogin, setLogin, userInfo, setUserInfo}) => {
         return;
     }
 
-    if (password.length < MIN_PASSWORD_LENGTH) {
-        alert(`Password must be at least ${MIN_PASSWORD_LENGTH} characters long.`);
+    if (password.length < MIN_PASSWORD_LENGTH || password.length > MAX_PASSWORD_LENGTH) {
+        alert(`Password must be at least ${MIN_PASSWORD_LENGTH} and at most ${MAX_PASSWORD_LENGTH} characters long.`);
         return;
     }
     //once pass the verfication, setUserInfo with valid value
     if (email.trim() === '' || password.trim() === ''){
         alert('Please enter both username and password.');
     }else{
-        axios.get("http://localhost:4001/get_user", {params:{email:email}})
+        axios.post("http://localhost:4001/login_verify", {email:email, password:password})
         .then((response) => {
-          const server_password = response.data.password
-          const server_email = response.data.email
-          // case success, successfully log in
-          if (password === server_password && email === server_email) {
-            setUserInfo({name: response.data.username, password:response.data.password, email:response.data.email})
-          } else {
-            alert("your password does not match your account")
-            return; 
-          }
+            setUserInfo({name: response.data.username, email:response.data.email})
         })
-        .catch((error) => {// case not reqister
-            if (error.response && error.response.data.message === "Account not registered") {
+        .catch((error) => {// case not reqister and incorrect password
+            if (error.response && error.response.data.message === "User not found") {
                 alert("your account has not been registered")
                 return;
-            } else { // case fetch data error
-                console.log(error, "something wrong with fetch db")
+            } else if (error.response && error.response.data.message === "Incorrect password") {
+              alert("your password does not match")
+            }
+            else { // case fetch data error
+                console.log(error, "something wrong with the database service")
             }
         })
     }
@@ -84,8 +81,8 @@ const LoginPage = ({ isLogin, setLogin, userInfo, setUserInfo}) => {
         return;
     }
 
-    if (username.length < MIN_USERNAME_LENGTH) {
-        alert(`Username must be at least ${MIN_USERNAME_LENGTH} characters long.`);
+    if (username.length < MIN_USERNAME_LENGTH || username.length > MAX_USERNAME_LENGTH) {
+        alert(`Username must be at least ${MIN_USERNAME_LENGTH} and at most ${MAX_USERNAME_LENGTH} characters long.`);
         return;
     }
 
@@ -94,8 +91,8 @@ const LoginPage = ({ isLogin, setLogin, userInfo, setUserInfo}) => {
         return;
     }
 
-    if (password.length < MIN_PASSWORD_LENGTH) {
-        alert(`Password must be at least ${MIN_PASSWORD_LENGTH} characters long.`);
+     if (password.length < MIN_PASSWORD_LENGTH || password.length > MAX_PASSWORD_LENGTH) {
+        alert(`Password must be at least ${MIN_PASSWORD_LENGTH} and at most ${MAX_PASSWORD_LENGTH} characters long.`);
         return;
     }
 
@@ -135,7 +132,7 @@ const LoginPage = ({ isLogin, setLogin, userInfo, setUserInfo}) => {
                 .then((response) => {
                   console.log("user data insert successfully")
                   // make sure user info in database and then set to login
-                  setUserInfo({name: username, password: password, email:email})
+                  setUserInfo({name: username, email:email})
                   })
                 .catch((error) => console.log(error, "something wrong with post to db"))
             } else { // case fetch data error

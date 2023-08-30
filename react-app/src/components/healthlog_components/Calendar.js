@@ -240,43 +240,41 @@ function Calendar({userInfo}) {
         weather_condition: "Sunny",
       });
       setShowHealthStatusForm(false);
-    }else{
-       let heart_rate_message = "Please enter heart rate in range 40 - 200 bmp "
-       let weight_message = "Please enter weight in range 20 - 200 kg "
-       let systolic_message = "Please enter systolic in range 40 - 200 mmHg "
-       let diastolic_message = "Please enter diastolic in range 40 - 200 mmHg "
-       let body_temperature_message = "Please enter body temperature in range 34 - 42 °C "
-       let hours_of_sleep_message = "Please enter hour of sleep in range 0 - 24 hours "
-       let water_intake_message = "Please enter water intake in range 0 - 8 cups "
-       let exercise_minutes_message = "Please enter exercise minutes in range 0 - 1440 minutes "
+    }else {
+      const errorMessages = [];
 
-       if (heart_rate_validition) {
-        heart_rate_message = ""
-       }
-       if(weight_validation){
-        weight_message = ""
-       }
-       if (systolic_validation){
-        systolic_message = ""
-       }
-       if (diastolic_validation){
-        diastolic_message = ""
-       }
-       if (body_temperature_validation){
-        body_temperature_message = ""
-       }
-       if (hours_of_sleep_validation){
-        hours_of_sleep_message = ""
-       }
-       if (water_intake_validation){
-        water_intake_message = ""
-       }
-       if (exercise_minutes_validation){
-        exercise_minutes_message = ""
-       }
-       alert(heart_rate_message + weight_message + systolic_message + diastolic_message + body_temperature_message + hours_of_sleep_message + water_intake_message + exercise_minutes_message)
-       return;
+      if (!heart_rate_validition) {
+          errorMessages.push("Please enter heart rate in range 40 - 200 bmp");
+      }
+      if (!weight_validation) {
+          errorMessages.push("Please enter weight in range 20 - 200 kg");
+      }
+      if (!systolic_validation) {
+          errorMessages.push("Please enter systolic in range 40 - 200 mmHg");
+      }
+      if (!diastolic_validation) {
+          errorMessages.push("Please enter diastolic in range 40 - 200 mmHg");
+      }
+      if (!body_temperature_validation) {
+          errorMessages.push("Please enter body temperature in range 34 - 42 °C");
+      }
+      if (!hours_of_sleep_validation) {
+          errorMessages.push("Please enter hour of sleep in range 0 - 24 hours");
+      }
+      if (!water_intake_validation) {
+          errorMessages.push("Please enter water intake in range 0 - 8 cups");
+      }
+      if (!exercise_minutes_validation) {
+          errorMessages.push("Please enter exercise minutes in range 0 - 1440 minutes");
+      }
+
+      if (errorMessages.length > 0) {
+          const formattedMessage = errorMessages.map((msg, index) => `${index + 1}. ${msg}`).join('\n');
+          alert(formattedMessage);
+      }
+        return;
     }
+
   };
   
   /**

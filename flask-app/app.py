@@ -3,6 +3,8 @@ from flask_cors import CORS
 from cassandra.cluster import Cluster
 from datetime import datetime, timedelta
 import random
+import re
+import bcrypt
 
 app = Flask(__name__)
 CORS(app)
@@ -67,64 +69,73 @@ for date in dates:
         (email, username, date, heart_rate, weight, blood_pressure, body_temperature, hours_of_sleep, stress_level, water_intake, diet, exercise_minutes, mood, weather_condition)
     )
 
+## database Initialization
+def initialize_db():
+    try:
+        # switch to the health_hive keyspace
+        session.execute("""
+        CREATE KEYSPACE IF NOT EXISTS health_hive
+        WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 2};
+        """)
+        session.execute("""USE health_hive""")
+        
+        # Create the user table for userinfo storage
+        session.execute("""
+        CREATE TABLE IF NOT EXISTS health_hive.user(
+            email text,
+            username text,
+            password text,
+            salt text,
+            PRIMARY KEY (email)
+        )
+        """)
+        
+        # Create the prediction table for storing wellness prediction
+        session.execute("""
+        CREATE TABLE IF NOT EXISTS health_hive.prediction(
+            email text,
+            date text,
+            diabetes_risk text,
+            hypertension_risk text,
+            fever_risk text,
+            depression_risk text,
+            health_index text,
+            PRIMARY KEY (email, date)
+        )
+        """)
+        
+        # Create the logs table for storing health logs
+        session.execute("""
+        CREATE TABLE IF NOT EXISTS health_hive.logs (
+            email text,
+            username text static,
+            date text,
+            heart_rate text,
+            weight text,
+            blood_pressure text,
+            body_temperature text,
+            hours_of_sleep text,
+            stress_level text,
+            water_intake text,
+            diet text,
+            exercise_minutes text,
+            mood text,
+            weather_condition text,
+            PRIMARY KEY (email, date)
+        )
+        """)
+    except Exception as e:
+        print("initialize database error")
+
+initialize_db()
+
+
 @app.route('/')
 def hello():
     return 'Hello, Flask v1!'
 
-
-@app.route('/calculate')
-def calculate():
-    num1 = int(request.args.get('num1'))
-    num2 = int(request.args.get('num2'))
-
-    result = num1 + num2
-
-    return jsonify({'result': result})
-
-## Method insert user sign up information into cassandra db
-@app.route("/user_insertion", methods = ['POST'])
-def user_insertion():
-    print("start inserting userinfo")
-    session.execute("""
-    CREATE KEYSPACE IF NOT EXISTS health_hive
-    WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 2};
-""")
-    session.execute("""USE health_hive""")
-    session.execute("""
-    CREATE TABLE IF NOT EXISTS health_hive.user(
-        email text,
-        username text,
-        password text,
-        PRIMARY KEY (email)
-    )
-    """)
-    try:
-        email = request.json.get("email")
-        username = request.json.get("username")
-        password = request.json.get("password")
-        session.execute("""INSERT INTO health_hive.user (email, username, password)
-                            VALUES (%s, %s, %s)""", (email, username, password))
-        
-        return "USER data has been successfully inserted into db"
-
-    except Exception as e:
-        return str(e)
-
 @app.route('/insert_prediction', methods = ['POST'])
 def insert_prediction():
-    session.execute("""USE health_hive""")
-    session.execute("""
-    CREATE TABLE IF NOT EXISTS health_hive.prediction(
-        email text,
-        date text,
-        diabetes_risk text,
-        hypertension_risk text,
-        fever_risk text,
-        depression_risk text,
-        health_index text,
-        PRIMARY KEY (email, date)
-    )
-    """)
     try:
         email = request.json.get("email")
         date = request.json.get('date')
@@ -144,7 +155,7 @@ def insert_prediction():
             (email, date, diabetes_risk, hypertension_risk, fever_risk, depression_risk, health_index)
         )
 
-    return "prediction insert successfully"
+    return "health prediction insert successfully"
 
 ## function get prediction metrics by date
 @app.route('/get_prediction_metrics_by_date')
@@ -199,23 +210,85 @@ def get_health_index_by_range():
     else:
         return jsonify({'message':"No index has generated"}), 400
 
+## Method insert user sign up information into cassandra db, with data validation
+@app.route("/user_insertion", methods = ['POST'])
+def user_insertion():
+    try:
+        email = request.json.get("email")
+        username = request.json.get("username")
+        password = request.json.get("password")
 
-## Method get user info by EMAIL for sign in verification
+        ## backend validation for email username password
+        if not email or not username or not password:
+            return "Missing required fields for userinfo", 400
+        
+        ## test email
+        email_regex = r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
+        email_result = bool(re.match(email_regex, email))
+
+        if not email_result:
+            return "Input invalid email into backend", 400
+        
+        ## test username
+        username_regex = r"^[a-zA-Z0-9]+$"
+        username_format_result = bool(re.match(username_regex, username))
+
+        if not username_format_result:
+            return "Input invalid username format into backend", 400
+        
+        username_length_result = len(username) >= 3  and len(username) <= 20
+
+        if not username_length_result:
+            return "Input invalid username length into backend", 400
+        
+        ## test password
+        password_length_result = len(password) >= 8 and len(password) <= 16
+
+        if not password_length_result:
+            return "Input invalid password length into backend", 400
+        
+        salt = bcrypt.gensalt()
+        password_hash = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+
+        session.execute("""INSERT INTO health_hive.user (email, username, password, salt)
+                            VALUES (%s, %s, %s, %s)""", (email, username, password_hash, salt.decode('utf-8')))
+        
+        return "USER data has been successfully inserted into db"
+
+    except Exception as e:
+        return str(e)
+
+## function verify login at backend
+@app.route('/login_verify', methods = ['POST'])
+def login_verify():
+    try:
+        email = request.json.get('email')
+        password = request.json.get('password')
+        keyspace = "health_hive"
+        table = "user"
+        ## select encoded password
+        query = f"SELECT * FROM {keyspace}.{table} WHERE email=%s"
+        row = session.execute(query, [email]).one()
+         
+        if not row:
+            return jsonify({"message": "User not found"}),400
+
+        stored_salt = row.salt.encode('utf-8')
+        password_hash = bcrypt.hashpw(password.encode('utf-8'), stored_salt).decode('utf-8')
+
+        ## compare user's encode password with db record
+        if password_hash == row.password:
+            return jsonify({'email':row.email, "username":row.username}) 
+        else:
+            return jsonify({"message": "Incorrect password"}),400
+
+    except Exception as e:
+        print(str(e))
+
+
+## Method get user info by EMAIL for sign up verification
 @app.route('/get_user', methods = ['GET'])
 def get_user():
-    session.execute("""
-    CREATE KEYSPACE IF NOT EXISTS health_hive
-    WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 2};
-""")
-    session.execute("""USE health_hive""")
-    session.execute("""
-    CREATE TABLE IF NOT EXISTS health_hive.user(
-        email text,
-        username text,
-        password text,
-        PRIMARY KEY (email)
-    )
-    """)
     email = request.args.get('email')
     user_info = get_user_by_email(email)
     if user_info != None:
@@ -234,7 +307,7 @@ def get_user_by_email(email):
         return None
 
     for row in rows:
-        return {"email": row.email, "password": row.password, "username":row.username}
+        return {"email": row.email, "username":row.username}
 
 
 ## Method insert log data into cassandra db
@@ -446,6 +519,14 @@ def show_logs():
     rows = session.execute("SELECT * FROM health_hive.logs")
     ##print(rows)
     data = [{'email': row.email, 'username': row.username, 'date': row.date, 'heart_rate': row.heart_rate, 'weight': row.weight, 'blood_pressure': row.blood_pressure, 'body_temperature': row.body_temperature, 'hours_of_sleep': row.hours_of_sleep, 'stress_level': row.stress_level, 'water_intake': row.water_intake, 'diet': row.diet, 'exercise_minutes': row.exercise_minutes, 'mood': row.mood, 'weather_condition': row.weather_condition}
+            for row in rows]
+    return jsonify(data)
+
+@app.route('/show_user')
+def show_user():
+    rows = session.execute("SELECT * FROM health_hive.user")
+    ##print(rows)
+    data = [{'email': row.email, 'username': row.username, 'password':row.password, 'salt':row.salt}
             for row in rows]
     return jsonify(data)
 

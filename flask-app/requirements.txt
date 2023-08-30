@@ -12,6 +12,6 @@ protobuf==3.20.3
 six==1.16.0
 Werkzeug==2.2.3
 cassandra-driver==3.25.0
-
+bcrypt
 
 
