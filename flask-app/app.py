@@ -127,7 +127,11 @@ def initialize_db():
     except Exception as e:
         print("initialize database error")
 
-initialize_db()
+## start database
+try:
+    initialize_db()
+except Exception as e:
+    print(str(e))
 
 
 @app.route('/')
@@ -144,10 +148,32 @@ def insert_prediction():
         fever_risk = request.json.get('fever_risk')
         depression_risk = request.json.get('depression_risk')
         health_index = request.json.get("health_index")
-    except Exception as e:
-        return str(e)
+
+        ## test email validation
+        email_regex = r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
+        email_result = bool(re.match(email_regex, email))
+
+        if not email_result:
+            return "Input invalid email into backend", 400
+
+        ## test date validation
+        date_regex = r'^\d{4}-\d{2}-\d{2}$'
+        date_result = bool(re.match(date_regex, date))
+
+        if not date_result:
+            return "Input invalid date into backend", 400
+        
+        ## test diabetes risk
+        diabetes_result = 0 <= float(diabetes_risk) and float(diabetes_risk) <= 100
+        hypertension_result = 0 <= float(hypertension_risk) and float(hypertension_risk) <= 100
+        fever_result = 0 <= float(fever_risk) and float(fever_risk) <= 100
+        depression_result = 0 <= float(depression_risk) and float(depression_risk) <= 100
+        health_index_result = 0 <= float(health_index) and float(health_index) <= 100
+
+        if not (diabetes_result and hypertension_result and fever_result and depression_result and health_index_result):
+            return "Input invalid risk and index into backend", 400
     
-    session.execute(
+        session.execute(
             """
             INSERT INTO health_hive.prediction (email, date, diabetes_risk, hypertension_risk, fever_risk, depression_risk, health_index)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
@@ -155,60 +181,75 @@ def insert_prediction():
             (email, date, diabetes_risk, hypertension_risk, fever_risk, depression_risk, health_index)
         )
 
-    return "health prediction insert successfully"
+        return "health prediction insert successfully"
+    except Exception as e:
+        return str(e)
 
 ## function get prediction metrics by date
 @app.route('/get_prediction_metrics_by_date')
 def get_prediction_metrics_by_date():
-    session.execute("""
-    CREATE TABLE IF NOT EXISTS health_hive.prediction(
-        email text,
-        date text,
-        diabetes_risk text,
-        hypertension_risk text,
-        fever_risk text,
-        depression_risk text,
-        health_index text,
-        PRIMARY KEY (email, date)
-    )
-    """)
-    email = request.args.get('email')
-    date = request.args.get('date')
-    query = f"SELECT * FROM health_hive.prediction WHERE email=%s AND date=%s"
-    rows = session.execute(query, [email, date])
-    if rows:
-        for row in rows:
-            return jsonify({"email": row.email, 'date':row.date, 'diabetes_risk':row.diabetes_risk, "hypertension_risk":row.hypertension_risk, "fever_risk":row.fever_risk, "depression_risk":row.depression_risk, "health_index":row.health_index})
-    else:
-        return jsonify({'message':"No Report has generated"}), 400
+    try:
+        email = request.args.get('email')
+        date = request.args.get('date')
+
+         ## test email validation
+        email_regex = r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
+        email_result = bool(re.match(email_regex, email))
+
+        if not email_result:
+            return "Input invalid email into backend for query", 400
+
+        ## test date validation
+        date_regex = r'^\d{4}-\d{2}-\d{2}$'
+        date_result = bool(re.match(date_regex, date))
+
+        if not date_result:
+            return "Input invalid date into backend for query", 400
+
+        query = f"SELECT * FROM health_hive.prediction WHERE email=%s AND date=%s"
+        rows = session.execute(query, [email, date])
+
+        if rows:
+            for row in rows:
+                return jsonify({"email": row.email, 'date':row.date, 'diabetes_risk':row.diabetes_risk, "hypertension_risk":row.hypertension_risk, "fever_risk":row.fever_risk, "depression_risk":row.depression_risk, "health_index":row.health_index})
+        else:
+            return jsonify({'message':"No Report has generated"}), 400
+    except Exception as e:
+        print(str(e))
 
 ## function get health_index by date range
 @app.route('/get_health_index_by_range')
 def get_health_index_by_range():
-    session.execute("""
-    CREATE TABLE IF NOT EXISTS health_hive.prediction(
-        email text,
-        date text,
-        diabetes_risk text,
-        hypertension_risk text,
-        fever_risk text,
-        depression_risk text,
-        health_index text,
-        PRIMARY KEY (email, date)
-    )
-    """)
-    email = request.args.get('email')
-    date = request.args.get('date')
-    ## fetch all health_index include today's date
-    query = f"SELECT date, health_index FROM health_hive.prediction WHERE email=%s AND date <= %s"
-    rows = session.execute(query, [email, date])
-    if rows:
-        data = []
-        for row in rows:
-            data.append({'date':row.date, "health_index":row.health_index})
-        return jsonify(data)
-    else:
-        return jsonify({'message':"No index has generated"}), 400
+    try:
+        email = request.args.get('email')
+        date = request.args.get('date')
+
+        ## test email validation
+        email_regex = r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
+        email_result = bool(re.match(email_regex, email))
+
+        if not email_result:
+            return "Input invalid email into backend for query", 400
+
+        ## test date validation
+        date_regex = r'^\d{4}-\d{2}-\d{2}$'
+        date_result = bool(re.match(date_regex, date))
+
+        if not date_result:
+            return "Input invalid date into backend for query", 400
+
+        ## fetch all health_index include today's date
+        query = f"SELECT date, health_index FROM health_hive.prediction WHERE email=%s AND date <= %s"
+        rows = session.execute(query, [email, date])
+        if rows:
+            data = []
+            for row in rows:
+                data.append({'date':row.date, "health_index":row.health_index})
+            return jsonify(data)
+        else:
+            return jsonify({'message':"No index has generated"}), 400
+    except Exception as e:
+        print(str(e))
 
 ## Method insert user sign up information into cassandra db, with data validation
 @app.route("/user_insertion", methods = ['POST'])
@@ -289,12 +330,21 @@ def login_verify():
 ## Method get user info by EMAIL for sign up verification
 @app.route('/get_user', methods = ['GET'])
 def get_user():
-    email = request.args.get('email')
-    user_info = get_user_by_email(email)
-    if user_info != None:
-        return jsonify(user_info)
-    else:
-        return jsonify({"message": "Account not registered"}), 400
+    try:
+        email = request.args.get('email')
+        ## test email
+        email_regex = r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
+        email_result = bool(re.match(email_regex, email))
+        if not email_result:
+            return "Input invalid email into backend for query", 400
+
+        user_info = get_user_by_email(email)
+        if user_info != None:
+            return jsonify(user_info)
+        else:
+            return jsonify({"message": "Account not registered"}), 400
+    except Exception as e:
+        print(str(e))
 
 ## Help Method help to get userinfo by Email
 def get_user_by_email(email):
@@ -309,37 +359,21 @@ def get_user_by_email(email):
     for row in rows:
         return {"email": row.email, "username":row.username}
 
+## function validate numeric health metrics values 
+def validate_input(value, min, max):
+    ## allow user to leave empty field
+    if value == "":
+        return True
+    try:
+        value = float(value)
+        return min <= value <= max
+    except ValueError:
+        return False
+
 
 ## Method insert log data into cassandra db
 @app.route('/logs_insertion', methods=['POST'])
 def logs_insertion():
-    print("start insertt data")
-    
-    session.execute("""
-    CREATE KEYSPACE IF NOT EXISTS health_hive
-    WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 2};
-""")
-    session.execute("""USE health_hive""")
-    session.execute("""
-        CREATE TABLE IF NOT EXISTS health_hive.logs (
-            email text,
-            username text static,
-            date text,
-            heart_rate text,
-            weight text,
-            blood_pressure text,
-            body_temperature text,
-            hours_of_sleep text,
-            stress_level text,
-            water_intake text,
-            diet text,
-            exercise_minutes text,
-            mood text,
-            weather_condition text,
-            PRIMARY KEY (email, date)
-        );
-    """)
-
     try:
         email = request.json.get('email')
         username = request.json.get('username')
@@ -358,6 +392,102 @@ def logs_insertion():
 
         ##print(email, username, date, heart_rate, weight, blood_pressure, body_temperature)
 
+        ## test email
+        email_regex = r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
+        email_result = bool(re.match(email_regex, email))
+
+        if not email_result:
+            return "Input invalid email into backend", 400
+        
+        ## test username
+        username_regex = r"^[a-zA-Z0-9]+$"
+        username_format_result = bool(re.match(username_regex, username))
+
+        if not username_format_result:
+            return "Input invalid username format into backend", 400
+        
+        # test date validation
+        date_regex = r'^\d{4}-\d{2}-\d{2}$'
+        date_result = bool(re.match(date_regex, date))
+
+        if not date_result:
+            return "Input invalid date into backend", 400
+        
+        ## test heart_rate
+        heart_rate_result = validate_input(heart_rate, 40, 200)
+
+        if not heart_rate_result:
+            return "Input invalid heart rate into backend", 400
+
+        ## test weight
+        weight_result = validate_input(weight, 20, 200)
+
+        if not weight_result:
+            return "Input invalid weight into backend", 400
+
+        ## test blood pressure
+        try:
+            systolic, diastolic = blood_pressure.split('/')
+        except ValueError:
+            return False
+        
+        blood_pressure_reult = validate_input(systolic, 40, 200) and validate_input(diastolic, 40, 200)
+
+        if not blood_pressure_reult:
+            return "Input input invalid blood pressure into backend", 400
+
+        ## test body temperature
+        body_temperature_result = validate_input(body_temperature, 34, 42)
+
+        if not body_temperature_result:
+            return "Input invalid body temperature into backend", 400
+
+        ## test hours of sleep
+        hours_of_sleep_result = validate_input(hours_of_sleep, 0, 24)
+
+        if not hours_of_sleep_result:
+            return "Input invalid hour of slepp into backend", 400
+
+        ## test stress level
+        stress_range = [str(i + 1) for i in range(10)]
+        stress_level_result = stress_level in stress_range
+
+        if not stress_level_result:
+            return "Input invalid stress level into backend", 400
+
+        ## test water intake
+        water_intake_result = validate_input(water_intake, 0, 8)
+
+        if not water_intake_result:
+            return "Input invalid water intake into backend", 400
+        
+        ## test diet
+        diet_range = ["Healthy", "Unhealthy"]
+        diet_result = diet in diet_range
+
+        if not diet_result:
+            return "Input invalid diet into backend", 400
+
+        ## test exercise minutes
+        exercise_result = validate_input(exercise_minutes, 0, 1440)
+
+        if not exercise_result:
+            return "Input invalid exercise miniutes into backend", 400
+
+        ## test mood
+        mood_range = ["Happy", "Sad", "Neutral", "Excited", "Tired"]
+        mood_result = mood in mood_range
+
+        if not mood_result:
+            return "Input invalid mood into backend", 400
+
+        ## test weather condition
+        weather_range = ["Sunny", "Rainy", "Cloudy", "Windy", "Snowy"]
+        weather_result = weather_condition in weather_range
+
+        if not weather_result:
+            return "Input invalid weather into backend", 400
+
         session.execute(
             """
             INSERT INTO health_hive.logs (email, username, date, heart_rate, weight, blood_pressure, body_temperature, hours_of_sleep, stress_level, water_intake, diet, exercise_minutes, mood, weather_condition)
@@ -374,11 +504,28 @@ def logs_insertion():
 ## Method delete data from database
 @app.route("/delete_logs", methods=["DELETE"])
 def delete_logs():
-    print("calling delete logs")
-    email = request.args.get('email')
-    date = request.args.get('date')
-    delete_logs_by_date(email, date)
-    return jsonify({"message":"successfully delete from database"})
+    try:
+        # print("calling delete logs")
+        email = request.args.get('email')
+        date = request.args.get('date')
+        ## test email
+        email_regex = r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
+        email_result = bool(re.match(email_regex, email))
+
+        if not email_result:
+            return "Input invalid email into backend for deleting", 400
+        
+        # test date validation
+        date_regex = r'^\d{4}-\d{2}-\d{2}$'
+        date_result = bool(re.match(date_regex, date))
+
+        if not date_result:
+            return "Input invalid date into backend", 400
+        
+        delete_logs_by_date(email, date)
+        return jsonify({"message":"successfully delete from database"})
+    except Exception as e:
+        print(str(e))
 
 ## Helper method to delete data from database
 def delete_logs_by_date(email, date):
@@ -391,10 +538,19 @@ def delete_logs_by_date(email, date):
 ## Method fetch data from database
 @app.route("/get_logs", methods=['GET'])
 def get_logs():
-    print("calling get logs")
-    email = request.args.get('email')
-    logs = get_logs_by_email(email)
-    return jsonify(logs)
+    try:
+        print("calling get logs")
+        email = request.args.get('email')
+        ## test email
+        email_regex = r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
+        email_result = bool(re.match(email_regex, email))
+        if not email_result:
+            return "Input invalid email into backend", 400
+
+        logs = get_logs_by_email(email)
+        return jsonify(logs)
+    except Exception as e:
+        print(str(e))
 
 ## Helper method help to get data from database by email
 def get_logs_by_email(email):
@@ -411,30 +567,35 @@ def get_logs_by_email(email):
 ## Function get health info by specific date
 @app.route("/get_logs_by_date", methods=['GET'])
 def get_logs_by_date():
-    keyspace = "health_hive"
-    table = "logs"
-    email = request.args.get("email")
-    date = request.args.get("date")
-    query = f"SELECT * FROM {keyspace}.{table} WHERE email=%s AND date=%s"
-    rows = session.execute(query, [email, date])
-    data = {}
-    for row in rows:
-        date_str = row.date 
-        data[date_str] = {'heart_rate': row.heart_rate, 'weight': row.weight, 'blood_pressure': row.blood_pressure, 'body_temperature': row.body_temperature, 'hours_of_sleep': row.hours_of_sleep, 'stress_level': row.stress_level, 'water_intake': row.water_intake, 'diet': row.diet, 'exercise_minutes': row.exercise_minutes, 'mood': row.mood, 'weather_condition': row.weather_condition}
-    if not data:
-        return jsonify({"message": "No records found for the given email and date."}), 401
-    return jsonify(data)
-
+    try:
+        keyspace = "health_hive"
+        table = "logs"
+        email = request.args.get("email")
+        date = request.args.get("date")
+        query = f"SELECT * FROM {keyspace}.{table} WHERE email=%s AND date=%s"
+        rows = session.execute(query, [email, date])
+        data = {}
+        for row in rows:
+            date_str = row.date 
+            data[date_str] = {'heart_rate': row.heart_rate, 'weight': row.weight, 'blood_pressure': row.blood_pressure, 'body_temperature': row.body_temperature, 'hours_of_sleep': row.hours_of_sleep, 'stress_level': row.stress_level, 'water_intake': row.water_intake, 'diet': row.diet, 'exercise_minutes': row.exercise_minutes, 'mood': row.mood, 'weather_condition': row.weather_condition}
+        if not data:
+            return jsonify({"message": "No records found for the given email and date."}), 401
+        return jsonify(data)
+    except Exception as e:
+        print(e)
 
 
 ## Method fetch data from database
 @app.route("/get_single_logs", methods=['GET'])
 def get_single_logs():
-    print("calling get single logs")
-    email = request.args.get('email')
-    metric = request.args.get("metric")
-    logs = get_single_logs_by_email(email, metric)
-    return jsonify(logs)
+    try:
+        print("calling get single logs")
+        email = request.args.get('email')
+        metric = request.args.get("metric")
+        logs = get_single_logs_by_email(email, metric)
+        return jsonify(logs)
+    except Exception as e:
+        print(e)
 
 ## Helper method help to get data from database by email
 def get_single_logs_by_email(email, metric):
@@ -452,12 +613,15 @@ def get_single_logs_by_email(email, metric):
 
 @app.route("/get_single_logs_by_date", methods=["GET"])
 def get_single_log_by_date():
-    email = request.args.get('email')
-    metric = request.args.get("metric")
-    startDate = request.args.get("startDate")
-    endDate = request.args.get("endDate")
-    logs = get_single_logs_by_email_date(email, metric, startDate, endDate)
-    return jsonify(logs)
+    try:
+        email = request.args.get('email')
+        metric = request.args.get("metric")
+        startDate = request.args.get("startDate")
+        endDate = request.args.get("endDate")
+        logs = get_single_logs_by_email_date(email, metric, startDate, endDate)
+        return jsonify(logs)
+    except Exception as e:
+        print(str(e))
 
 def get_single_logs_by_email_date(email, metric, startDate, endDate):
     if metric not in ["heart_rate", "weight", "blood_pressure", "body_temperature", "hours_of_sleep", "stress_level", "water_intake", "diet", "exercise_minutes", "mood", "weather_condition"]:
@@ -475,44 +639,6 @@ def get_single_logs_by_email_date(email, metric, startDate, endDate):
     except Exception as e:
         print("Error executing query:", e)  # Log the error for debugging
         return jsonify({"error": "Internal server error"}), 500
-
-
-@app.route('/insert-data', methods=['POST'])
-def insert_data():
-    print("start insert data")
-    session.execute("""
-    CREATE KEYSPACE IF NOT EXISTS weather
-    WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 2};
-""")
-    session.execute("""USE weather""")
-    session.execute("""
-        CREATE TABLE IF NOT EXISTS weather.stations (
-        id text,
-        name text static,
-        date text,
-        temperature float,
-        PRIMARY KEY (id, date)
-        )
-    """)
-    try:
-        id = request.json.get('id')
-        name = request.json.get('name')
-        temperature = float(request.json.get('temperature'))
-
-        # Insert data into Cassandra table
-        date = request.json.get("date")
-        session.execute(
-            """
-            INSERT INTO weather.stations (id, name, date, temperature)
-            VALUES (%s, %s, %s, %s)
-            """,
-            (id, name, date, temperature)
-        )
-
-        return 'Data inserted successfully!'
-    except Exception as e:
-        return str(e)
-
 
 @app.route('/show_logs')
 def show_logs():
