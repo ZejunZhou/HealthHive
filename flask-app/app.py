@@ -271,7 +271,7 @@ def user_insertion():
             return "Input invalid email into backend", 400
         
         ## test username
-        username_regex = r"^[a-zA-Z0-9]+$"
+        username_regex = r"^[a-zA-Z0-9 ]+$"
         username_format_result = bool(re.match(username_regex, username))
 
         if not username_format_result:
@@ -400,7 +400,7 @@ def logs_insertion():
             return "Input invalid email into backend", 400
         
         ## test username
-        username_regex = r"^[a-zA-Z0-9]+$"
+        username_regex = r"^[a-zA-Z0-9 ]+$"
         username_format_result = bool(re.match(username_regex, username))
 
         if not username_format_result:

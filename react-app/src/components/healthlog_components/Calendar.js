@@ -574,7 +574,7 @@ function Calendar({userInfo}) {
                 onChange={handleHealthStatusInputChange}
               > 
                 <option disabled>Choose Your Diet Type</option>
-                <option value="healthy">Healthy</option>
+                <option value="Healthy">Healthy</option>
                 <option value="Unhealthy">Unhealthy</option>
               </select>
             </label>
