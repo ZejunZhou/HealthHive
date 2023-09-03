@@ -103,7 +103,7 @@ function Chat() {
             <ChatContainer>       
               <MessageList 
                 scrollBehavior="smooth" 
-                typingIndicator={isTyping ? <TypingIndicator content="ChatGPT is typing" /> : null}
+                typingIndicator={isTyping ? <TypingIndicator content="Health Assistant is typing" /> : null}
               >
                 {messages.map((message, i) => {
                   console.log(message)

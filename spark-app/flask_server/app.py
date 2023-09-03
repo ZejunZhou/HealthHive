@@ -29,7 +29,7 @@ mood_indexer = StringIndexer(inputCol="mood", outputCol="moodIndex")
 weather_indexer = StringIndexer(inputCol="weather_condition", outputCol="weatherIndex")
 ## convert features to vector
 assembler = VectorAssembler(
-    inputCols=["heart_rate", "weight", "body_temperature", "hours_of_sleep", "stress_level", "water_intake", "dietIndex", "exercise_minutes", "moodIndex", "weatherIndex"],
+    inputCols=["heart_rate", "weight", "body_temperature", "hours_of_sleep", "stress_level", "water_intake", "dietIndex", "exercise_minutes", "moodIndex", "weatherIndex", 'systolic', 'diastolic'],
     outputCol="features"
 )
 ## build up diabetes regression model
@@ -100,9 +100,12 @@ def prediction():
         user_input['stress_level'] = convert_to_float(user_input['stress_level'])
         user_input['water_intake'] = convert_to_float(user_input['water_intake'])
         user_input['exercise_minutes'] = convert_to_float(user_input['exercise_minutes'])
+        user_input['systolic'] = convert_to_float(user_input['blood_pressure'].split('/')[0])
+        user_input['diastolic'] = convert_to_float(user_input['blood_pressure'].split('/')[1])
 
         # convert user_input object into Row
         row = Row(**user_input)
+        print(row)
         df = spark.createDataFrame([row])
 
         diabetes_result = get_prediction(diabetes_model, df)
@@ -112,11 +115,11 @@ def prediction():
         health_index_result = get_prediction(health_index_model, df)
 
         return jsonify({
-            "diabetes_risk": diabetes_result,
-            "hypertension_risk": hypertension_result,
-            "fever_risk": fever_result,
-            "depression_risk": depression_result,
-            "health_index": health_index_result
+            "diabetes_risk": "{:.1f}".format(diabetes_result),
+            "hypertension_risk": "{:.1f}".format(hypertension_result),
+            "fever_risk": "{:.1f}".format(fever_result),
+            "depression_risk": "{:.1f}".format(depression_result),
+            "health_index": "{:.1f}".format(health_index_result)
         })
 
     except Exception as e:

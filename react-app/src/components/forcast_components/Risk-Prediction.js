@@ -103,7 +103,7 @@ const RiskPrediction = ({userInfo}) => {
 
         let fillerClass; // decide what color to render
 
-        if (riskValue <= 50) {
+        if (riskValue <= 40) {
             fillerClass = styles.healthy;
         } else if (riskValue <= 70) {
             fillerClass = styles.moderate;
@@ -184,11 +184,11 @@ const RiskPrediction = ({userInfo}) => {
                 <div className={`${styles['label-container']}`}>
                     <div className={`row mt-4`} style={{width:'100%'}}>
                         <div className="col">
-                            <span>Healthy (0-50%) </span>
+                            <span>Healthy (0-40%) </span>
                             <div className={`${styles['label-healthy']}`}></div>
                         </div>
                         <div className="col">
-                            <span>Moderate (50-70%)</span>
+                            <span>Moderate (40-70%)</span>
                             <div className={`${styles['label-moderate']}`}></div>
                         </div>
                         <div className="col">
