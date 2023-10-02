@@ -7,6 +7,7 @@ HealthHive is a health information application designed to empower individuals t
 - Rev. 1.0 <2023-05-20>
 - Rev. 1.1 <2023-08-01>
 - Rev. 1.2 <2023-09-02> Version 1.0 released and deployed
+- Rev. 1.3 <2023-10-01> Finalize the documentation for Version 1.0
 
 ## Features
 
