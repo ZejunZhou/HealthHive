@@ -5,8 +5,10 @@ from datetime import datetime, timedelta
 import random
 import re
 import bcrypt
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app)
 CORS(app)
 
 # Connect to the Cassandra cluster
@@ -138,7 +140,7 @@ except Exception as e:
 def hello():
     return 'Hello, Flask v1!'
 
-@app.route('/insert_prediction', methods = ['POST'])
+@app.route('/api/insert_prediction', methods = ['POST'])
 def insert_prediction():
     try:
         email = request.json.get("email")
@@ -186,7 +188,7 @@ def insert_prediction():
         return str(e)
 
 ## function get prediction metrics by date
-@app.route('/get_prediction_metrics_by_date')
+@app.route('/api/get_prediction_metrics_by_date')
 def get_prediction_metrics_by_date():
     try:
         email = request.args.get('email')
@@ -218,7 +220,7 @@ def get_prediction_metrics_by_date():
         print(str(e))
 
 ## function get health_index by date range
-@app.route('/get_health_index_by_range')
+@app.route('/api/get_health_index_by_range')
 def get_health_index_by_range():
     try:
         email = request.args.get('email')
@@ -252,7 +254,7 @@ def get_health_index_by_range():
         print(str(e))
 
 ## Method insert user sign up information into cassandra db, with data validation
-@app.route("/user_insertion", methods = ['POST'])
+@app.route("/api/user_insertion", methods = ['POST'])
 def user_insertion():
     try:
         email = request.json.get("email")
@@ -300,7 +302,7 @@ def user_insertion():
         return str(e)
 
 ## function verify login at backend
-@app.route('/login_verify', methods = ['POST'])
+@app.route('/api/login_verify', methods = ['POST'])
 def login_verify():
     try:
         email = request.json.get('email')
@@ -328,7 +330,7 @@ def login_verify():
 
 
 ## Method get user info by EMAIL for sign up verification
-@app.route('/get_user', methods = ['GET'])
+@app.route('/api/get_user', methods = ['GET'])
 def get_user():
     try:
         email = request.args.get('email')
@@ -372,7 +374,7 @@ def validate_input(value, min, max):
 
 
 ## Method insert log data into cassandra db
-@app.route('/logs_insertion', methods=['POST'])
+@app.route('/api/logs_insertion', methods=['POST'])
 def logs_insertion():
     try:
         email = request.json.get('email')
@@ -502,7 +504,7 @@ def logs_insertion():
         return str(e)
 
 ## Method delete data from database
-@app.route("/delete_logs", methods=["DELETE"])
+@app.route("/api/delete_logs", methods=["DELETE"])
 def delete_logs():
     try:
         # print("calling delete logs")
@@ -536,7 +538,7 @@ def delete_logs_by_date(email, date):
    
 
 ## Method fetch data from database
-@app.route("/get_logs", methods=['GET'])
+@app.route("/api/get_logs", methods=['GET'])
 def get_logs():
     try:
         print("calling get logs")
@@ -565,7 +567,7 @@ def get_logs_by_email(email):
     return data
 
 ## Function get health info by specific date
-@app.route("/get_logs_by_date", methods=['GET'])
+@app.route("/api/get_logs_by_date", methods=['GET'])
 def get_logs_by_date():
     try:
         keyspace = "health_hive"
@@ -586,7 +588,7 @@ def get_logs_by_date():
 
 
 ## Method fetch data from database
-@app.route("/get_single_logs", methods=['GET'])
+@app.route("/api/get_single_logs", methods=['GET'])
 def get_single_logs():
     try:
         print("calling get single logs")
@@ -611,7 +613,7 @@ def get_single_logs_by_email(email, metric):
         data[date_str] = {'email': row.email, 'username': row.username, metric:getattr(row, metric)}
     return data
 
-@app.route("/get_single_logs_by_date", methods=["GET"])
+@app.route("/api/get_single_logs_by_date", methods=["GET"])
 def get_single_log_by_date():
     try:
         email = request.args.get('email')
@@ -640,7 +642,7 @@ def get_single_logs_by_email_date(email, metric, startDate, endDate):
         print("Error executing query:", e)  # Log the error for debugging
         return jsonify({"error": "Internal server error"}), 500
 
-@app.route('/show_logs')
+@app.route('/api/show_logs')
 def show_logs():
     rows = session.execute("SELECT * FROM health_hive.logs")
     ##print(rows)
@@ -648,7 +650,7 @@ def show_logs():
             for row in rows]
     return jsonify(data)
 
-@app.route('/show_user')
+@app.route('/api/show_user')
 def show_user():
     rows = session.execute("SELECT * FROM health_hive.user")
     ##print(rows)

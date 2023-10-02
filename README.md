@@ -6,6 +6,7 @@ HealthHive is a health information application designed to empower individuals t
 
 - Rev. 1.0 <2023-05-20>
 - Rev. 1.1 <2023-08-01>
+- Rev. 1.2 <2023-09-02> Version 1.0 released and deployed
 
 ## Features
 
@@ -16,7 +17,7 @@ HealthHive is a health information application designed to empower individuals t
 
 ## Documentation
 
-Please check the project documentation at [here](./HealthHive_Requirement_Documentation.v1.1.docx)
+Please check the project documentation at [here](./~%24althHive_Requirement_Documentation.v1.3.docx)
 
 ## Project Structure
 
@@ -54,10 +55,6 @@ docker logs healthhive-flask-backend-1
 docker logs <-container id of flask backend container->
 ```
 
-## Access 
-Access React app at **localhost:3000**
-
-
 ## Get Start (Spark Cluster)
 
 At Directory **spark-app**, build up docker containers use following command
@@ -73,4 +70,23 @@ docker-compose up -d
 ```
 
 **Notice:** Spark Cluster require tremendous resources to initialize. The default setting of docker container is using Spark locally. But feel free to try the Spark cluster setting by editing the comments from docker-compose file!
+
+
+## Access 
+- Access React app at **localhost:3000**
+- Access Flask app at **localhost:4001**
+- Access Spark app at **localhost:4002**
+if decide to use Spark cluster feature, access the spark Web ui at **localhost:8080**
+
+## Deployment Requirement
+
+- Obtain a Google Credentials OAuth Client ID
+- Obtain a Chatgpt api key
+
+In react-app/src/configData.js, replace the **CLIENT_ID:** with Google client id and replace the **GPT_API_KEY** with Chatgpt api key. 
+
+
+
+
+
 

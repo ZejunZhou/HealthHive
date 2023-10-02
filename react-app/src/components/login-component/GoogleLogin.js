@@ -17,7 +17,7 @@ const GoogleLogin = ({isLogin, setLogin, userInfo, setUserInfo}) => {
   const handleSuccess = async(codeResponse) => {
     const accessToken = codeResponse.access_token;
     await fetchUserInfo(accessToken);
-    console.log("Login success:", codeResponse);
+    //console.log("Login success:", codeResponse);
   }
   /**
    * asyc function get userInfo object by using Google access token
@@ -37,7 +37,7 @@ const GoogleLogin = ({isLogin, setLogin, userInfo, setUserInfo}) => {
   };
 
   const handleFailure = (error) => {
-    console.log("Failure", error);
+    //console.log("Failure", error);
   }
   
   /**
@@ -53,7 +53,7 @@ const GoogleLogin = ({isLogin, setLogin, userInfo, setUserInfo}) => {
    * hooks that monitor userinfo, is there is userinfo obj, navigate to healthlog
    */
   useEffect(() => {
-    console.log("login verfify is ", userInfo, isLogin)
+    //console.log("login verfify is ", userInfo, isLogin)
     if (userInfo && !isLogin) {
       setLogin(true);
       navigate("/healthlog");
@@ -63,7 +63,7 @@ const GoogleLogin = ({isLogin, setLogin, userInfo, setUserInfo}) => {
 
 
   return (
-   <button type="button" className={styles.content} onClick={login}> 
+   <button type="button" className={`btn btn-light`} onClick={login}> 
       <img className={styles.googleImg} src="https://img.icons8.com/color/16/000000/google-logo.png" alt="google"/>
       <span>Continue with Google</span>
    </button>

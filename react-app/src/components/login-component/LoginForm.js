@@ -63,7 +63,7 @@ const LoginPage = ({ isLogin, setLogin, userInfo, setUserInfo}) => {
               alert("your password does not match")
             }
             else { // case fetch data error
-                console.log(error, "something wrong with the database service")
+                //console.log(error, "something wrong with the database service")
             }
         })
     }
@@ -130,13 +130,13 @@ const LoginPage = ({ isLogin, setLogin, userInfo, setUserInfo}) => {
             if (error.response && error.response.data.message === "Account not registered") {
                  axios.post("http://localhost:4001/user_insertion", {email: email, username: username, password: password})
                 .then((response) => {
-                  console.log("user data insert successfully")
+                  //console.log("user data insert successfully")
                   // make sure user info in database and then set to login
                   setUserInfo({name: username, email:email})
                   })
                 .catch((error) => console.log(error, "something wrong with post to db"))
             } else { // case fetch data error
-                console.log(error, "something wrong with fetch from db")
+                //console.log(error, "something wrong with fetch from db")
             }
         })
     } 
